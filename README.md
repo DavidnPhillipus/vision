@@ -3,12 +3,172 @@
 Vision turns the **Namibia Rangeland & Pasture Dataset** (UNAM / Farm4Trade / Lacuna Fund)
 into clear, practical grazing and livestock guidance. A farmer creates a farm, adds camps
 (paddocks), enters current livestock, and runs an **explainable assessment** for each camp.
-Behind the scenes a real **OpenAI tool-calling agent** combines the research dataset, live
-**Open-Meteo** weather, deterministic calculations and optional camp photos, then returns a
-status, a direct answer, a recommendation, the evidence used, a confidence level and clear
-limitations — never just a verdict.
+Behind the scenes a real **tool-calling agent** (Google Gemini by default) combines the
+research seed data, live **Open-Meteo** weather, deterministic calculations and optional
+camp photos, then returns a status, a direct answer, a recommendation, the evidence used,
+a confidence level and clear limitations — never just a verdict.
 
 > Built for the Deep Learning IndabaX Namibia 2026 Hackathon.
+
+---
+
+## Setup on a new machine (no `dataset/` folder)
+
+You do **not** need the ~4 GB raw Excel/photos folder. The cleaned research tables ship in
+`backend/app/data/reference_seed.json` and load into Postgres in one command. That is enough
+for assessments, comparable plots, weather, chat, and the demo farm — the same flow that
+works on a fully set-up machine.
+
+### Prerequisites
+
+| Tool | Version | Notes |
+|------|---------|--------|
+| **Docker Desktop** | recent | Runs PostgreSQL 16 |
+| **Python** | 3.12+ | Backend |
+| **Node.js** | 18+ | Website + mobile |
+| **Gemini API key** | free tier OK | [Google AI Studio](https://aistudio.google.com/apikey) |
+
+Optional: Expo Go on a phone if you want the mobile app.
+
+### 1. Clone and enter the project
+
+```bash
+git clone https://github.com/Twawana/Deep-Learning-IndabaX.git
+cd Deep-Learning-IndabaX
+git checkout vision
+```
+
+(Or clone any fork that contains this Vision tree.)
+
+### 2. Start PostgreSQL
+
+```bash
+docker compose up -d db
+```
+
+Postgres listens on **localhost:5433**  
+(`vision` / `vision` / database `vision`).
+
+### 3. Backend (API + AI agent)
+
+```bash
+cd backend
+python -m venv .venv
+
+# Windows
+.venv\Scripts\activate
+# macOS / Linux
+# source .venv/bin/activate
+
+pip install -r requirements.txt
+
+# Windows
+copy .env.example .env
+# macOS / Linux
+# cp .env.example .env
+```
+
+Edit `backend/.env` so it matches a working AI setup (this is what the project uses):
+
+```env
+# Google Gemini via the OpenAI-compatible endpoint
+OPENAI_API_KEY=paste-your-gemini-api-key-here
+OPENAI_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/
+OPENAI_MODEL=gemini-3.1-flash-lite
+OPENAI_VISION_MODEL=gemini-3.1-flash-lite
+
+DATABASE_URL=postgresql+psycopg2://vision:vision@localhost:5433/vision
+CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000,http://localhost:8081,http://127.0.0.1:8081
+UPLOAD_DIR=uploads
+```
+
+Get a key at https://aistudio.google.com/apikey — never commit `.env`.
+
+**Why these model names?** `gemini-3.1-flash-lite` has a generous free-tier quota and supports
+tool calling + photo analysis. Heavier Gemini flash models can hit very low daily limits.
+
+**Prefer real OpenAI instead?** Clear `OPENAI_BASE_URL` (leave empty) and set e.g.
+`OPENAI_MODEL=gpt-4o-mini` and `OPENAI_VISION_MODEL=gpt-4o-mini` with an OpenAI key.
+
+Then migrate, load the shipped seed (no dataset folder), seed the demo farm, and run:
+
+```bash
+python -m alembic upgrade head
+python -m app.etl.load_reference    # uses reference_seed.json — no dataset/ needed
+python -m app.seed                  # demo farm + four camps
+
+python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+Checks:
+
+- Health: http://localhost:8000/health — should show `"ai_enabled": true` and `"ai_provider": "gemini"`
+- Docs: http://localhost:8000/docs
+
+Without an API key the app still runs assessments via a rule-based fallback, but chat and
+photo vision need a key for the full experience.
+
+### 4. Website (Next.js)
+
+In a **new terminal**:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Open http://localhost:3000  
+(If 3000 is busy, Next.js will use 3001 — that is fine.)
+
+Optional `frontend/.env.local` (defaults already point at the local API):
+
+```env
+API_PROXY_URL=http://127.0.0.1:8000
+```
+
+### 5. Mobile app (optional)
+
+```bash
+cd mobile
+npm install
+npm start
+```
+
+Backend must use `--host 0.0.0.0`. On a physical phone, set `mobile/.env` if needed:
+
+```env
+EXPO_PUBLIC_API_URL=http://YOUR_PC_LAN_IP:8000
+```
+
+See `mobile/README.md` for emulator URLs.
+
+### 6. Demo login and first flow
+
+| Field | Value |
+|-------|--------|
+| Email | `demo@vision.na` |
+| Password | `vision123` |
+
+1. Open the website → sign in with the demo account  
+2. **Assess a camp** → pick **River Camp** (or North Camp)  
+3. Confirm livestock → **Run assessment**  
+4. Review status, evidence, confidence, limitations  
+5. Ask a follow-up in **Advisor**
+
+You should get a real Gemini-backed assessment (e.g. Good / Watch / High concern), not only
+the offline rules engine.
+
+### Quick troubleshooting
+
+| Symptom | Fix |
+|---------|-----|
+| `ai_enabled: false` | Set `OPENAI_API_KEY` in `backend/.env` and restart uvicorn |
+| DB connection errors | `docker compose up -d db` and confirm port **5433** |
+| Empty camps / no research plots | Re-run `python -m app.etl.load_reference` and `python -m app.seed` |
+| Frontend API 502 / failed fetch | Backend must be on port 8000; check `API_PROXY_URL` |
+| Phone cannot reach API | Same Wi‑Fi, `--host 0.0.0.0`, correct LAN IP, allow port 8000 in firewall |
+| Gemini quota / 429 | Stay on `gemini-3.1-flash-lite`, wait, or switch to an OpenAI key |
 
 ---
 
@@ -27,10 +187,9 @@ limitations — never just a verdict.
   never as the farmer's own camp.
 - **Dashboard, camp pages, an assessment wizard, camp comparison, and an AI advisor chat**
   on the **website** (Next.js) and a companion **Expo React Native mobile app** that share
-  one API, one account, and one design system (`shared/` — colours, fonts, prompts, API client).
-- **Optional photos** (one general photo, or four guided N/E/S/W photos) that strengthen —
-  but never replace — the assessment, plus historical photo trend descriptions.
-- **Graceful fallback**: without an OpenAI key the app still runs full assessments using a
+  one API, one account, and one design system (`shared/`).
+- **Optional photos** that strengthen — but never replace — the assessment.
+- **Graceful fallback**: without an API key the app still runs full assessments using a
   transparent rule-based engine over the same evidence.
 
 ---
@@ -39,30 +198,17 @@ limitations — never just a verdict.
 
 ```
 Vision/
-  dataset/                 OPTIONAL local Excel + photos (~4 GB). Mine once, then delete.
-  docker-compose.yml       PostgreSQL 16 (local / cloud DB)
-  backend/                 FastAPI + SQLAlchemy + Alembic + pandas + OpenAI
+  docker-compose.yml       PostgreSQL 16
+  backend/                 FastAPI + SQLAlchemy + Alembic + Gemini/OpenAI-compatible client
     app/
       data/reference_seed.json  Cleaned mined reference data (ships with the app)
-      etl/build_reference.py    Excel -> Postgres + seed (needs dataset/ once)
-      etl/load_reference.py     Seed -> Postgres (cloud / no dataset folder)
-      models/                  Farm, Camp, Assessment, CampPhoto, ChatMessage,
-                               ReferencePlot, ReferenceCoverRound, ReferenceSpecies,
-                               ReferencePhotoMeta
-      services/                dataset, weather (Open-Meteo), calc (LSU/ha, grazing),
-                               matching (comparable plots), assessment, photo (vision)
-      agent/                   tools.py (tool schemas + dispatch), agent.py (tool-calling
-                               loop), prompts.py, fallback.py (rule-based engine)
-      api/                     farms, camps, assessments, chat, compare, photos, dataset
-      seed.py                  demo farm with four differing camps
-  frontend/                Next.js website (App Router) + TypeScript + Tailwind
-    src/app/                 dashboard, camps/[id], camps/new, assess, compare, advisor
-    src/lib/api.ts           thin wrapper around @vision/shared API client
-  mobile/                  Expo React Native app (same API + auth + styles)
-    app/                     Home, Camps, Assess, Compare, Ask, Login
-    src/lib/api.ts           thin wrapper around @vision/shared API client
-  shared/                  @vision/shared — design tokens, types, domain helpers, API client,
-                           offline cache helpers (timeouts, GET cache, mutation queue)
+      etl/load_reference.py     Seed -> Postgres (use this on every new machine)
+      agent/                    tool-calling loop + rule-based fallback
+      api/                      farms, camps, assessments, chat, compare, photos, dataset
+      seed.py                   demo farm with four differing camps
+  frontend/                Next.js website
+  mobile/                  Expo React Native app
+  shared/                  @vision/shared — tokens, types, API client, offline helpers
 ```
 
 ### Data flow for the core assessment
@@ -71,145 +217,44 @@ Vision/
 Farmer opens Vision -> picks a camp -> enters livestock -> (skips photos) -> runs assessment
   -> backend loads camp (farmer-provided)
   -> retrieves live Open-Meteo weather for the camp coordinates
-  -> searches the dataset for comparable research plots (distance + ecoregion + vegetation)
+  -> searches the seed data for comparable research plots
   -> computes livestock/ha (LSU) and grazing duration
-  -> the OpenAI agent combines everything and submits a structured assessment
+  -> the Gemini agent combines everything and submits a structured assessment
   -> saved to PostgreSQL and displayed with evidence, confidence and limitations
   -> the farmer can ask a follow-up question in the AI advisor
 ```
 
 ---
 
-## The dataset (mined into the database)
+## Research data (no raw dataset required)
 
-The raw `dataset/` folder (~4 GB of Excel + research photos) is a **one-time source**.
-Vision mines and cleans it into Postgres; the running app and cloud deploys **never open
-that folder**.
+The raw `dataset/` folder (~4 GB) is a **one-time mining source** used only when rebuilding
+the seed. It is **not** in git and **not** needed to run the app.
 
-Tables:
-
-- `reference_plots` — one row per research plot (~70), aggregating cover, standing crop,
-  biomass, woody proxies, grazing/game notes, rainfall, coords, ecoregion, dominant species
-- `reference_cover_rounds` — per-round cover for seasonal trends
-- `reference_species` — cleaned dominant species list per plot
-- `reference_photo_meta` — catalog of the 888 research photos (filenames only — not the
-  multi‑GB JPEG binaries; those stay optional locally)
-
-**Local mine (needs `dataset/` once):**
+On a new machine:
 
 ```bash
 python -m alembic upgrade head
-python -m app.etl.build_reference    # loads Postgres + writes app/data/reference_seed.json
+python -m app.etl.load_reference     # from backend/app/data/reference_seed.json
 ```
 
-**Cloud / fresh machine (no `dataset/` folder):**
-
-```bash
-python -m alembic upgrade head
-python -m app.etl.load_reference     # loads from committed reference_seed.json
-```
-
-After a successful mine you can delete `dataset/` locally; keep `reference_seed.json` in git
-for structured tables. **Photo/PDF/map bytes live in Postgres** — migrate them with a database
-dump (`pg_dump`), not the JSON seed.
-
-**Load images + manuals into Postgres (required once before deleting `dataset/`):**
-
-```bash
-python -m app.etl.load_reference_media
-```
-
-This stores all 888 research JPEGs (lightly compressed) plus the end-user manual and site maps
-as BYTEA in `reference_photo_meta` / `reference_assets`. Serve via:
-
-- `GET /api/dataset/photos/{id}/file`
-- `GET /api/dataset/assets/{id}/file`
-
-Note: `coordinates.xlsx` has swapped lat/long headers; the ETL corrects this and also
-back-fills coords from grazing forms and ecoregions from sibling plots at the same site.
-Live assessment rainfall still comes from Open-Meteo (not the fieldform rainfall column).
-
----
-
-## Running locally
-
-Prerequisites: **Python 3.12**, **Node.js 18+**, and **Docker** (for PostgreSQL).
-
-### 1. Start PostgreSQL
-
-```bash
-docker compose up -d db      # exposes PostgreSQL on localhost:5433
-```
-
-### 2. Backend
-
-```bash
-cd backend
-python -m venv .venv
-.venv\Scripts\activate        # Windows;  source .venv/bin/activate on macOS/Linux
-pip install -r requirements.txt
-
-# configure environment
-copy .env.example .env         # cp on macOS/Linux
-# edit .env and set OPENAI_API_KEY=sk-...   (required for the AI agent + chat + photo analysis)
-
-# apply the database schema
-python -m alembic upgrade head
-
-# load cleaned research data into Postgres
-# Prefer the seed (no 4 GB folder). If seed is missing and dataset/ exists, mine Excel first.
-python -m app.etl.load_reference
-# Or, with the raw Excel folder present, re-mine and refresh the seed:
-# python -m app.etl.build_reference
-
-# seed a demo farm with four differing camps (optional but recommended for the demo)
-python -m app.seed
-
-# run the API (0.0.0.0 so the mobile app on a phone can reach it)
-python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-```
-
-The API is now at `http://localhost:8000` (docs at `/docs`, health at `/health`).
-
-### 3. Website (Next.js)
-
-```bash
-cd frontend
-npm install
-npm run dev                    # http://localhost:3000
-```
-
-The frontend proxies `/api/*` to the backend (see `next.config.mjs`, `API_PROXY_URL`).
-
-### 4. Mobile app (Expo / React Native)
-
-```bash
-cd mobile
-npm install
-npm start                      # Expo Go / emulator — see mobile/README.md
-```
-
-Same backend and demo login (`demo@vision.na` / `vision123`). Use `--host 0.0.0.0` on
-uvicorn and set `EXPO_PUBLIC_API_URL` to your PC’s LAN IP if the phone cannot auto-detect it.
-
-### First flow to try
-
-Open `http://localhost:3000` (or the Expo app) → **Assess a camp** → pick **River Camp** →
-confirm livestock → **Run assessment** → review evidence → **Ask a follow-up** in the advisor.
+That loads ~70 research plots, cover rounds, species, and photo metadata filenames.
+Research JPEG binaries (optional media) are separate and not required for assessments.
 
 ---
 
 ## Models & tools used
 
-- **LLM**: OpenAI (`gpt-4o-mini` by default; configurable via `OPENAI_MODEL`) with function
-  calling for the agent, and the same multimodal model for optional photo analysis.
-- **Weather**: Open-Meteo forecast + archive APIs (no key required).
-- **Backend**: FastAPI, SQLAlchemy 2, Alembic, pandas + openpyxl, Pillow (image compression).
-- **Database**: PostgreSQL 16.
-- **Website**: Next.js 15, TypeScript, Tailwind CSS, Recharts, lucide-react; installable PWA
-  with offline shell + saved camp data.
-- **Mobile**: Expo (React Native) + Expo Router, Secure Store auth, expo-speech TTS;
-  AsyncStorage cache for camps/assessments when the network is weak or offline.
+- **LLM (default)**: Google Gemini `gemini-3.1-flash-lite` via the OpenAI-compatible API
+  (`OPENAI_BASE_URL` + `OPENAI_API_KEY`). Same model for tool calling and optional photo analysis.
+- **LLM (optional)**: Any OpenAI-compatible API (e.g. OpenAI `gpt-4o-mini`) by changing `.env`.
+- **Weather**: Open-Meteo (no key).
+- **Backend**: FastAPI, SQLAlchemy 2, Alembic, pandas, Pillow.
+- **Database**: PostgreSQL 16 (Docker).
+- **Website**: Next.js 15, TypeScript, Tailwind, Recharts; PWA + offline shell.
+- **Mobile**: Expo Router, Secure Store auth, speech; AsyncStorage offline cache.
+
+---
 
 ## Transparency & safety
 
