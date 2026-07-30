@@ -17,7 +17,12 @@ out/
 # Data artifacts
 backend/uploads/
 backend/.cache/
+backend/.cache.sqlite
+*.sqlite
 *.log
+*.tsbuildinfo
+tsc-output.txt
+tsc-exit.txt
 
 # Raw Namibia Excel + research photos (~4 GB). Not needed at runtime or for cloud —
 # mined data lives in Postgres / backend/app/data/reference_seed.json
