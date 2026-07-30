@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+
+# Node
+node_modules/
+.next/
+out/
+.expo/
+*.local
+
+# Data artifacts
+backend/uploads/
+backend/.cache/
+*.log
+
+# Raw Namibia Excel + research photos (~4 GB). Not needed at runtime or for cloud —
+# mined data lives in Postgres / backend/app/data/reference_seed.json
+dataset/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
