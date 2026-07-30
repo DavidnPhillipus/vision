@@ -40,14 +40,25 @@ git checkout vision
 
 (Or clone any fork that contains this Vision tree.)
 
-### 2. Start PostgreSQL
+### 2. Database (Supabase recommended)
 
-```bash
-docker compose up -d db
+Vision talks to **Postgres**. For the shared / deploy setup use **Supabase** (session pooler, IPv4):
+
+1. Create a project at [supabase.com](https://supabase.com)
+2. In **Project Settings → Database**, copy the **Session pooler** URI (port `5432`)
+3. Put it in `backend/.env` as `DATABASE_URL`, using the SQLAlchemy form:
+
+```env
+DATABASE_URL=postgresql+psycopg2://postgres.YOUR_REF:YOUR_PASSWORD@aws-0-REGION.pooler.supabase.com:5432/postgres?sslmode=require
 ```
 
-Postgres listens on **localhost:5433**  
-(`vision` / `vision` / database `vision`).
+Encode `@` in the password as `%40`. Do **not** use the publishable/anon API key for this — Vision uses the Postgres URL only.
+
+Optional local Docker Postgres (not required when Supabase is configured):
+
+```bash
+docker compose --profile local-db up -d db   # localhost:5433
+```
 
 ### 3. Backend (API + AI agent)
 

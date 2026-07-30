@@ -1,6 +1,6 @@
 import { Link } from "expo-router";
 import { useState } from "react";
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from "react-native";
+import { Image, KeyboardAvoidingView, Platform, StyleSheet, Text, View } from "react-native";
 
 import { Button, Card, ErrorText, Field, Label, ScreenScroll } from "../../src/components/ui";
 import { useAuth } from "../../src/context/AuthContext";
@@ -30,7 +30,7 @@ export default function LoginScreen() {
     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={{ flex: 1 }}>
       <ScreenScroll contentStyle={{ paddingTop: 72 }}>
         <View style={styles.brandRow}>
-          <View style={styles.mark} />
+          <Image source={require("../../assets/icon.png")} style={styles.mark} accessibilityLabel="Vision logo" />
           <Text style={styles.brand}>Vision</Text>
         </View>
         <Text style={styles.headline}>Grazing advice you can act on.</Text>
@@ -75,10 +75,9 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   mark: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: palette.veld[600],
+    width: 40,
+    height: 40,
+    borderRadius: 12,
   },
   brand: {
     fontFamily: fontFamily.displayBold,

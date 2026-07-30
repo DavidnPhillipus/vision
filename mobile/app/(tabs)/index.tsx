@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { ASK_SUGGESTIONS, latestAssessment, type Assessment } from "@vision/shared";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { StatusBadge } from "../../src/components/StatusBadge";
 import {
@@ -93,12 +93,19 @@ export default function HomeScreen() {
       <Text style={styles.hero}>What do you want to know about your grazing?</Text>
 
       <View style={styles.askBox}>
-        <TextArea
-          value={ask}
-          onChangeText={setAsk}
-          placeholder="Ask Vision anything about your camps, herd, or rainfall…"
-          style={styles.askInput}
-        />
+        <View style={styles.askRow}>
+          <Image
+            source={require("../../assets/icon.png")}
+            style={styles.askLogo}
+            accessibilityLabel="Vision logo"
+          />
+          <TextArea
+            value={ask}
+            onChangeText={setAsk}
+            placeholder="Ask Vision anything about your camps, herd, or rainfall…"
+            style={styles.askInput}
+          />
+        </View>
         <View style={styles.askFooter}>
           <Text style={styles.askHint}>Uses your farm data + live weather</Text>
           <Pressable onPress={() => goAsk(ask)} style={styles.askBtn}>
@@ -176,6 +183,17 @@ const styles = StyleSheet.create({
     letterSpacing: -0.6,
     marginTop: 8,
   },
+  askRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 10,
+  },
+  askLogo: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    marginTop: 8,
+  },
   askBox: {
     marginTop: 20,
     backgroundColor: palette.white,
@@ -185,6 +203,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   askInput: {
+    flex: 1,
     borderWidth: 0,
     backgroundColor: "transparent",
     minHeight: 84,

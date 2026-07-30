@@ -22,6 +22,14 @@ export const metadata: Metadata = {
     "AI grazing advice for Namibian farmers. Assess camps, check rainfall, and decide when to move livestock — in plain language. Works offline with saved camp data.",
   manifest: "/manifest.webmanifest",
   themeColor: "#2f5d3a",
+  icons: {
+    icon: [
+      { url: "/logo-64.png", sizes: "64x64", type: "image/png" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/icon-192.png", sizes: "192x192", type: "image/png" }],
+  },
   appleWebApp: {
     capable: true,
     title: "Vision",

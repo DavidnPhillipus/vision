@@ -8,7 +8,6 @@ import {
   GitCompare,
   MessageCircleQuestion,
   MapPinned,
-  Sprout,
   LogOut,
   Menu,
   X,
@@ -18,6 +17,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/components/auth/auth-provider";
 import { useFarm } from "@/components/providers";
 import { ConnectivityBanner } from "@/components/connectivity-banner";
+import { VisionLogo } from "@/components/vision-logo";
 
 const nav = [
   { href: "/dashboard", label: "Home", icon: LayoutDashboard },
@@ -45,9 +45,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <ConnectivityBanner />
         <div className="flex w-full items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-10">
           <Link href="/dashboard" className="flex min-w-0 items-center gap-2.5">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-veld-700 text-white">
-              <Sprout className="h-4 w-4" />
-            </span>
+            <VisionLogo size={36} className="rounded-full" />
             <div className="min-w-0 leading-tight">
               <span className="font-display block text-xl font-semibold tracking-tight text-veld-900">Vision</span>
               <span className="block truncate text-xs text-veld-600/60">{farm?.name || "Advisor"}</span>

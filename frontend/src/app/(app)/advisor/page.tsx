@@ -10,6 +10,7 @@ import { useFarm } from "@/components/providers";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { MicButton, SpeakButton } from "@/components/speech-controls";
+import { VisionLogo } from "@/components/vision-logo";
 import { useSpeechToText, useTextToSpeech } from "@/hooks/use-speech";
 
 type Msg = { role: "user" | "assistant"; content: string };
@@ -111,10 +112,17 @@ function AdvisorChat() {
     <div className="mx-auto flex min-h-[calc(100vh-9rem)] w-full max-w-5xl flex-col lg:min-h-[calc(100vh-7rem)]">
       {!hasThread ? (
         <div className="flex flex-1 flex-col justify-center py-6 lg:py-16">
-          <h1 className="font-display text-3xl font-semibold tracking-tight text-veld-900 md:text-5xl">Ask Vision</h1>
-          <p className="mt-2 max-w-lg text-veld-600/70">
-            Plain-language grazing advice from your camps, live rainfall, and research data.
-          </p>
+          <div className="flex items-center gap-3 md:gap-4">
+            <VisionLogo size={64} className="rounded-2xl shadow-sm ring-1 ring-sand-200" />
+            <div>
+              <h1 className="font-display text-3xl font-semibold tracking-tight text-veld-900 md:text-5xl">
+                Ask Vision
+              </h1>
+              <p className="mt-1 max-w-lg text-veld-600/70 md:mt-2">
+                Plain-language grazing advice from your camps, live rainfall, and research data.
+              </p>
+            </div>
+          </div>
 
           {camps.length === 0 ? (
             <p className="mt-6 text-sm text-veld-700/75">
@@ -167,7 +175,8 @@ function AdvisorChat() {
         </div>
       ) : (
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-          <div>
+          <div className="flex items-center gap-2.5">
+            <VisionLogo size={36} className="rounded-xl ring-1 ring-sand-200" />
             <h1 className="font-display text-2xl font-semibold text-veld-900">Ask Vision</h1>
           </div>
           <div className="flex flex-wrap items-center gap-3 text-sm">
@@ -204,16 +213,19 @@ function AdvisorChat() {
       {hasThread ? (
         <div className="flex-1 space-y-4 pb-4">
           {messages.map((m, i) => (
-            <div key={i} className={m.role === "user" ? "flex justify-end" : "flex justify-start"}>
+            <div key={i} className={m.role === "user" ? "flex justify-end" : "flex items-start gap-2.5"}>
+              {m.role === "assistant" ? (
+                <VisionLogo size={32} className="mt-0.5 rounded-lg ring-1 ring-sand-200" />
+              ) : null}
               <div
-                className={`max-w-[90%] whitespace-pre-wrap px-1 text-[15px] leading-relaxed md:max-w-[85%] ${
+                className={`max-w-[90%] whitespace-pre-wrap text-[15px] leading-relaxed md:max-w-[85%] ${
                   m.role === "user"
                     ? "rounded-2xl bg-veld-800 px-4 py-3 text-white"
-                    : "text-veld-900"
+                    : "rounded-2xl bg-white px-4 py-3 text-veld-900 ring-1 ring-sand-200/80"
                 }`}
               >
                 {m.role === "assistant" ? (
-                  <p className="mb-1 text-xs font-medium uppercase tracking-wider text-veld-600/50">Vision</p>
+                  <p className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-veld-600/55">Vision</p>
                 ) : null}
                 {m.content}
                 {m.role === "assistant" ? (
@@ -229,7 +241,12 @@ function AdvisorChat() {
               </div>
             </div>
           ))}
-          {busy ? <p className="text-sm text-veld-600/55">Vision is thinking…</p> : null}
+          {busy ? (
+            <div className="flex items-center gap-2.5 text-sm text-veld-600/55">
+              <VisionLogo size={28} className="rounded-lg opacity-90 ring-1 ring-sand-200" />
+              Vision is thinking…
+            </div>
+          ) : null}
           <div ref={endRef} />
         </div>
       ) : null}
@@ -250,6 +267,7 @@ function AdvisorChat() {
       >
         <div className="rounded-2xl bg-white p-2 shadow-sm ring-1 ring-sand-200/90 focus-within:ring-veld-300">
           <div className="flex items-end gap-2">
+            <VisionLogo size={36} className="mb-1.5 ml-1 hidden rounded-lg ring-1 ring-sand-200 sm:block" />
             <input
               className="min-w-0 flex-1 border-0 bg-transparent px-3 py-3 text-base text-veld-900 placeholder:text-veld-600/40 focus:outline-none"
               value={displayInput}

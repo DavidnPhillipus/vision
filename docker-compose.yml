@@ -1,7 +1,12 @@
+# Optional local Postgres only. Production / shared team DB is Supabase
+# (set DATABASE_URL in backend/.env to the Supabase session pooler).
+# You can leave this stopped when using Supabase:
+#   docker compose stop db
 services:
   db:
     image: postgres:16-alpine
     container_name: vision_db
+    profiles: ["local-db"]
     restart: unless-stopped
     environment:
       POSTGRES_USER: vision

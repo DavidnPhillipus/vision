@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
+  Image,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -21,6 +22,8 @@ import { useNetwork } from "../../src/context/NetworkContext";
 import { useSpeechToText } from "../../src/hooks/useSpeechToText";
 import { api } from "../../src/lib/api";
 import { colors, fontFamily, palette, radii } from "../../src/lib/theme";
+
+const logo = require("../../assets/icon.png");
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -110,8 +113,13 @@ export default function AskScreen() {
   return (
     <View style={styles.screen}>
       <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
-        <Text style={styles.title}>Ask Vision</Text>
-        <Text style={styles.subtitle}>Same advisor and same farm data as the website.</Text>
+        <View style={styles.titleRow}>
+          <Image source={logo} style={styles.headerLogo} accessibilityLabel="Vision logo" />
+          <View style={{ flex: 1 }}>
+            <Text style={styles.title}>Ask Vision</Text>
+            <Text style={styles.subtitle}>Same advisor and same farm data as the website.</Text>
+          </View>
+        </View>
 
         <View style={styles.scopeRow}>
           <Chip label="Whole farm" active={campId === null} onPress={() => setCampId(null)} />
@@ -147,10 +155,19 @@ export default function AskScreen() {
           }
           renderItem={({ item }) => {
             const mine = item.role === "user";
+            if (mine) {
+              return (
+                <View style={[styles.bubble, styles.bubbleMine]}>
+                  <Text style={[styles.bubbleText, { color: palette.sand[50] }]}>{item.content}</Text>
+                </View>
+              );
+            }
             return (
-              <View style={[styles.bubble, mine ? styles.bubbleMine : styles.bubbleTheirs]}>
-                <Text style={[styles.bubbleText, mine && { color: palette.sand[50] }]}>{item.content}</Text>
-                {!mine ? (
+              <View style={styles.assistantRow}>
+                <Image source={logo} style={styles.avatar} accessibilityLabel="Vision" />
+                <View style={[styles.bubble, styles.bubbleTheirs]}>
+                  <Text style={styles.avatarLabel}>Vision</Text>
+                  <Text style={styles.bubbleText}>{item.content}</Text>
                   <Pressable
                     onPress={() => Speech.speak(item.content, { language: "en-GB" })}
                     style={styles.listen}
@@ -158,7 +175,7 @@ export default function AskScreen() {
                     <Ionicons name="volume-medium-outline" size={14} color={palette.veld[600]} />
                     <Text style={styles.listenText}>Listen</Text>
                   </Pressable>
-                ) : null}
+                </View>
               </View>
             );
           }}
@@ -214,6 +231,16 @@ const styles = StyleSheet.create({
     borderBottomColor: palette.sand[200],
     backgroundColor: palette.sand[50],
   },
+  titleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  headerLogo: {
+    width: 48,
+    height: 48,
+    borderRadius: 14,
+  },
   title: {
     fontFamily: fontFamily.displayBold,
     fontSize: 26,
@@ -224,6 +251,27 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: palette.veld[600],
     marginTop: 4,
+  },
+  assistantRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 8,
+    marginBottom: 10,
+    maxWidth: "94%",
+  },
+  avatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    marginTop: 2,
+  },
+  avatarLabel: {
+    fontFamily: fontFamily.bodySemi,
+    fontSize: 11,
+    letterSpacing: 0.6,
+    textTransform: "uppercase",
+    color: palette.veld[600],
+    marginBottom: 6,
   },
   scopeRow: {
     flexDirection: "row",
@@ -239,15 +287,15 @@ const styles = StyleSheet.create({
   bubble: {
     borderRadius: radii.lg,
     padding: 14,
-    marginBottom: 10,
     maxWidth: "90%",
   },
   bubbleMine: {
     alignSelf: "flex-end",
     backgroundColor: palette.veld[700],
+    marginBottom: 10,
   },
   bubbleTheirs: {
-    alignSelf: "flex-start",
+    flex: 1,
     backgroundColor: palette.white,
     borderWidth: 1,
     borderColor: palette.sand[200],

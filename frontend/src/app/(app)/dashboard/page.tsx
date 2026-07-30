@@ -10,6 +10,7 @@ import { useAuth } from "@/components/auth/auth-provider";
 import { Loading, ErrorState } from "@/components/states";
 import { OnboardingPanel } from "@/components/onboarding-panel";
 import { StatusBadge } from "@/components/status-badge";
+import { VisionLogo } from "@/components/vision-logo";
 import { api, type Assessment } from "@/lib/api";
 
 export default function DashboardPage() {
@@ -75,13 +76,16 @@ export default function DashboardPage() {
           }}
         >
           <div className="rounded-2xl bg-white p-2 shadow-sm ring-1 ring-sand-200/90 transition focus-within:ring-veld-300">
-            <textarea
-              value={ask}
-              onChange={(e) => setAsk(e.target.value)}
-              rows={3}
-              placeholder="Ask Vision anything about your camps, herd, or rainfall…"
-              className="w-full resize-none bg-transparent px-3 py-3 text-base text-veld-900 placeholder:text-veld-600/40 focus:outline-none md:text-lg"
-            />
+            <div className="flex items-start gap-2 px-1 pt-1">
+              <VisionLogo size={36} className="mt-2 rounded-lg ring-1 ring-sand-200" />
+              <textarea
+                value={ask}
+                onChange={(e) => setAsk(e.target.value)}
+                rows={3}
+                placeholder="Ask Vision anything about your camps, herd, or rainfall…"
+                className="w-full resize-none bg-transparent px-2 py-3 text-base text-veld-900 placeholder:text-veld-600/40 focus:outline-none md:text-lg"
+              />
+            </div>
             <div className="flex items-center justify-between gap-2 px-2 pb-1">
               <p className="hidden text-xs text-veld-600/45 sm:block">Uses your farm data + live weather</p>
               <button

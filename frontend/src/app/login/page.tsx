@@ -3,9 +3,12 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Sprout } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/components/auth/auth-provider";
 import { Button } from "@/components/ui/button";
+import { VisionLogo } from "@/components/vision-logo";
+
+const LOGIN_IMAGE = "/images/cattle-pasture.jpg";
 
 export default function LoginPage() {
   const { login, user, loading: authLoading } = useAuth();
@@ -38,22 +41,41 @@ export default function LoginPage() {
       <div
         className="relative hidden min-h-[40vh] flex-1 bg-cover bg-center md:block"
         style={{
-          backgroundImage:
-            "linear-gradient(160deg, rgba(29,59,38,0.75), rgba(29,59,38,0.35)), url(https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=1400&q=80)",
+          backgroundImage: `linear-gradient(160deg, rgba(29,59,38,0.75), rgba(29,59,38,0.35)), url(${LOGIN_IMAGE})`,
         }}
       >
+        <div className="absolute inset-x-0 top-0 flex items-center justify-between px-10 py-6">
+          <Link href="/" className="font-display text-2xl font-bold text-white transition hover:text-sand-100">
+            Vision
+          </Link>
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-white/90 transition hover:bg-white/10 hover:text-white"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to home
+          </Link>
+        </div>
         <div className="absolute bottom-10 left-10 right-10 text-white">
-          <p className="font-display text-4xl font-bold">Vision</p>
+          <Link href="/" className="font-display text-4xl font-bold transition hover:text-sand-100">
+            Vision
+          </Link>
           <p className="mt-2 max-w-sm text-sand-100/90">Sign in to assess camps and get practical grazing advice.</p>
         </div>
       </div>
 
       <div className="flex flex-1 items-center justify-center px-5 py-12">
         <div className="w-full max-w-md animate-rise">
-          <Link href="/" className="mb-8 flex items-center gap-2 md:hidden">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-veld-600 text-white">
-              <Sprout className="h-5 w-5" />
-            </span>
+          <Link
+            href="/"
+            className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-veld-700/80 transition hover:text-veld-800"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to home
+          </Link>
+
+          <Link href="/" className="mb-8 flex items-center gap-2.5">
+            <VisionLogo size={40} />
             <span className="font-display text-2xl font-bold text-veld-800">Vision</span>
           </Link>
 

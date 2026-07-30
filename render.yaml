@@ -1,0 +1,31 @@
+# Blueprint: https://dashboard.render.com → New → Blueprint
+# Set secret env vars in the Render dashboard after first sync
+# (OPENAI_API_KEY, DATABASE_URL, JWT_SECRET, CORS_ORIGINS).
+services:
+  - type: web
+    name: vision-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.8"
+      - key: OPENAI_BASE_URL
+        value: https://generativelanguage.googleapis.com/v1beta/openai/
+      - key: OPENAI_MODEL
+        value: gemini-3.1-flash-lite
+      - key: OPENAI_VISION_MODEL
+        value: gemini-3.1-flash-lite
+      - key: UPLOAD_DIR
+        value: uploads
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
