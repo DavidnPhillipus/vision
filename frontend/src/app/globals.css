@@ -1,0 +1,92 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: var(--font-sans), "IBM Plex Sans", system-ui, sans-serif;
+  --font-display: var(--font-display), "IBM Plex Serif", Georgia, serif;
+}
+
+body {
+  background-color: #f7f3ea;
+  background-image: linear-gradient(180deg, #faf7f1 0%, #f3ecdf 100%);
+  color: #1d3b26;
+  min-height: 100vh;
+}
+
+@layer components {
+  .font-display {
+    font-family: var(--font-display);
+  }
+  .card {
+    @apply rounded-2xl bg-white/90 shadow-sm ring-1 ring-sand-200/80 backdrop-blur-sm;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-md font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-veld-400 disabled:opacity-50 disabled:pointer-events-none;
+  }
+  .btn-lg {
+    @apply h-12 px-6 text-base;
+  }
+  .btn-md {
+    @apply h-11 px-4 text-sm;
+  }
+  .btn-primary {
+    @apply bg-veld-600 text-white hover:bg-veld-700;
+  }
+  .btn-secondary {
+    @apply bg-sand-100 text-veld-800 ring-1 ring-sand-200 hover:bg-sand-200;
+  }
+  .btn-outline {
+    @apply bg-white text-veld-700 ring-1 ring-veld-200 hover:bg-veld-50;
+  }
+  .input {
+    @apply h-12 w-full rounded-md border border-sand-200 bg-white px-3 text-base text-veld-900 placeholder:text-sand-400 focus:border-veld-400 focus:outline-none focus:ring-2 focus:ring-veld-100;
+  }
+  .label {
+    @apply mb-1.5 block text-sm font-semibold text-veld-700;
+  }
+}
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fade-in 0.45s ease-out both;
+  }
+  .animate-rise {
+    animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .animate-rise-delay {
+    animation: rise 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
+  }
+  .animate-kenburns {
+    animation: kenburns 18s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes kenburns {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.06);
+  }
+}
