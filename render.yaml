@@ -1,19 +1,14 @@
 # Blueprint: https://dashboard.render.com → New → Blueprint
-# Set secret env vars in the Render dashboard after first sync
-# (OPENAI_API_KEY, DATABASE_URL, JWT_SECRET, CORS_ORIGINS).
+# Docker pins Python 3.12 (native "Python 3" on Render may default to 3.14).
 services:
   - type: web
     name: vision-api
-    runtime: python
+    runtime: docker
     plan: free
-    rootDir: backend
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
     healthCheckPath: /health
     envVars:
-      # Must be 3.12.x — 3.14 has no wheels for pydantic/pandas and breaks the build.
-      - key: PYTHON_VERSION
-        value: "3.12.8"
       - key: OPENAI_BASE_URL
         value: https://generativelanguage.googleapis.com/v1beta/openai/
       - key: OPENAI_MODEL

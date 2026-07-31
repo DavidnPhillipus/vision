@@ -14,13 +14,30 @@ Use a branch Render/Vercel can see, e.g. `vision` or `main` on:
 
 ## 2. Render — API
 
-1. https://dashboard.render.com → **New** → **Blueprint** (uses `render.yaml`)  
-   **or** **Web Service** connected to the GitHub repo
-2. If manual Web Service:
-   - **Root Directory:** `backend`
-   - **Build:** `pip install -r requirements.txt`
-   - **Start:** `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-3. **Environment** (copy `DATABASE_URL` from your local `backend/.env` — the Supabase **pooler** URL):
+Use **Docker** (recommended). Native “Python 3” on Render may pick **3.14**, which breaks `pydantic` / `pandas` installs.
+
+### Option A — Docker (recommended)
+
+1. https://dashboard.render.com → your **vision** Web Service → **Settings**
+2. Set:
+   - **Language / Runtime:** Docker  
+   - **Dockerfile Path:** `backend/Dockerfile`  
+   - **Docker Build Context Directory:** `backend`  
+   - **Health Check Path:** `/health`
+3. Keep the same Environment variables as below.
+4. **Manual Deploy → Clear build cache & deploy**
+
+### Option B — Native Python (only if Docker isn’t available)
+
+1. Root Directory: `backend`
+2. Env: `PYTHON_VERSION=3.12.8` (must not be 3.14)
+3. Build: `pip install -r requirements.txt`
+4. Start: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+5. Clear build cache & deploy
+
+### Environment variables
+
+Copy `DATABASE_URL` from your local `backend/.env` (Supabase **pooler** URL):
 
 | Key | Value |
 |-----|--------|

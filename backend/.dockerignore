@@ -1,0 +1,10 @@
+.venv
+__pycache__
+*.pyc
+.env
+.env.*
+uploads
+.cache
+*.sqlite
+*.log
+.pytest_cache
