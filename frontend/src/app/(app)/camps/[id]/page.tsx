@@ -230,7 +230,7 @@ export default function CampPage() {
                         });
                         if ("queued" in result && result.queued) {
                           setCamp({ ...camp, latitude: pendingLoc.lat, longitude: pendingLoc.lon });
-                        } else {
+                        } else if ("id" in result) {
                           setCamp(result);
                           api.campWeather(camp.id).then(setWeather).catch(() => undefined);
                         }
@@ -350,7 +350,7 @@ export default function CampPage() {
                       const result = await queueUpdateCamp(camp.id, payload);
                       if ("queued" in result && result.queued) {
                         setCamp({ ...camp, ...payload });
-                      } else {
+                      } else if ("id" in result) {
                         setCamp(result);
                       }
                       setEditingHerd(false);

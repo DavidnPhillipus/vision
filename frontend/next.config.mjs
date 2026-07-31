@@ -5,6 +5,8 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Monorepo: include sibling shared/ when deploying with Root Directory = frontend.
+  outputFileTracingRoot: path.join(dirname, ".."),
   // The shared design/API layer lives outside this app's directory.
   experimental: {
     externalDir: true,

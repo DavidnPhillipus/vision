@@ -79,7 +79,7 @@ export default function NewCampPage() {
         setQueuedOffline(true);
         setCreatedName(form.name);
         setCreatedId(-1);
-      } else {
+      } else if ("id" in result) {
         await refresh();
         setCreatedId(result.id);
         setCreatedName(result.name);
