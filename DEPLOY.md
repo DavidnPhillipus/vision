@@ -67,13 +67,42 @@ Copy `DATABASE_URL` from your local `backend/.env` (Supabase **pooler** URL):
 5. Update Render `CORS_ORIGINS` to that URL and **Manual Deploy** the API once more  
 6. Sign in: `demo@vision.na` / `vision123`
 
-## 4. Mobile (optional)
+## 4. CORS (after website is live)
 
-```env
-EXPO_PUBLIC_API_URL=https://YOUR-SERVICE.onrender.com
+On Render, set:
+
+```text
+CORS_ORIGINS=https://vision-kf45.vercel.app,http://localhost:3000,http://localhost:8081
 ```
 
-Restart Expo.
+## 5. Mobile
+
+Website: https://vision-kf45.vercel.app  
+API: https://vision-52yf.onrender.com
+
+### Quick demo (Expo Go)
+
+```bash
+cd mobile
+# .env already can point at production:
+# EXPO_PUBLIC_API_URL=https://vision-52yf.onrender.com
+npm install
+npx expo start
+```
+
+Scan the QR code with **Expo Go**. Login: `demo@vision.na` / `vision123`.
+
+### Shareable Android APK (EAS free tier)
+
+```bash
+cd mobile
+npm install -g eas-cli   # once
+eas login
+eas build:configure      # once if prompted
+eas build -p android --profile preview
+```
+
+Download the APK from the Expo dashboard link when the build finishes.
 
 ## Checklist
 

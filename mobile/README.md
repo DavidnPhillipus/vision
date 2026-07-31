@@ -35,19 +35,28 @@ Then press `a` for Android emulator, `i` for iOS simulator, or scan the QR code 
 
 ### API URL
 
-By default the app uses your Expo LAN IP on port **8000** (so a real phone can reach the backend).
-
-Override in `mobile/.env`:
+**Production (deployed):**
 
 ```
-EXPO_PUBLIC_API_URL=http://192.168.x.x:8000
+EXPO_PUBLIC_API_URL=https://vision-52yf.onrender.com
 ```
 
-- Android emulator: `http://10.0.2.2:8000`
-- iOS simulator: `http://127.0.0.1:8000`
-- Physical phone: `http://YOUR_PC_LAN_IP:8000` (PC and phone on same Wi‑Fi; Windows Firewall may need to allow port 8000)
+**Local backend** (optional) in `mobile/.env`:
+
+```
+EXPO_PUBLIC_API_URL=http://192.168.x.x:8002
+```
+
+- Android emulator: `http://10.0.2.2:8002`
+- iOS simulator: `http://127.0.0.1:8002`
+- Physical phone: `http://YOUR_PC_LAN_IP:8002`
 
 Demo login: `demo@vision.na` / `vision123`
+
+### Deploy / share
+
+- **Expo Go:** `npx expo start` with production `EXPO_PUBLIC_API_URL` set  
+- **Android APK:** `eas build -p android --profile preview` (see `eas.json` + root `DEPLOY.md`)
 
 ## Website + mobile
 
