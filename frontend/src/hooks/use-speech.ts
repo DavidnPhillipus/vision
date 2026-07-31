@@ -1,5 +1,6 @@
 "use client";
 
+import { forSpeech } from "@vision/shared";
 import * as React from "react";
 
 type SpeechRecognitionLike = {
@@ -153,7 +154,8 @@ export function useTextToSpeech(opts?: { lang?: string; rate?: number }) {
   const speak = React.useCallback(
     (text: string) => {
       if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-      const clean = text.replace(/[*#_>`]/g, " ").replace(/\s+/g, " ").trim();
+      // Speak only the plain AI wording — never markdown stars or UI chrome.
+      const clean = forSpeech(text);
       if (!clean) return;
 
       window.speechSynthesis.cancel();

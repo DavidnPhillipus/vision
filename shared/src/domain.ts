@@ -81,6 +81,31 @@ export function fmt(n: number | null | undefined, digits = 1) {
   return Number(n).toLocaleString(undefined, { maximumFractionDigits: digits });
 }
 
+/**
+ * Strip markdown emphasis/code markers for plain UI + speech.
+ * Turns "**ecoregion**" into "ecoregion" so stars never show or get spoken.
+ */
+export function stripMarkdown(text: string | null | undefined): string {
+  if (!text) return "";
+  return text
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/__([^_]+)__/g, "$1")
+    .replace(/(^|\W)\*([^*\n]+)\*(?=\W|$)/g, "$1$2")
+    .replace(/(^|\W)_([^_\n]+)_(?=\W|$)/g, "$1$2")
+    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/^\s*[-*+]\s+/gm, "")
+    .replace(/[*#_>~]+/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/** Soften text for TTS — markdown out, keep readable punctuation. */
+export function forSpeech(text: string | null | undefined): string {
+  return stripMarkdown(text);
+}
+
 export function formatDate(value?: string | null) {
   if (!value) return "—";
   return new Date(value).toLocaleDateString();

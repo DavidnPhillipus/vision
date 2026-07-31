@@ -5,18 +5,19 @@ import {
   IBMPlexSans_700Bold,
 } from "@expo-google-fonts/ibm-plex-sans";
 import { IBMPlexSerif_600SemiBold, IBMPlexSerif_700Bold } from "@expo-google-fonts/ibm-plex-serif";
+import { Ionicons } from "@expo/vector-icons";
 import { useFonts } from "expo-font";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { AuthProvider, useAuth } from "../src/context/AuthContext";
 import { FarmProvider } from "../src/context/FarmContext";
 import { NetworkProvider } from "../src/context/NetworkContext";
 import { ConnectivityBanner } from "../src/components/ConnectivityBanner";
-import { colors, palette } from "../src/lib/theme";
+import { colors, fontFamily, palette } from "../src/lib/theme";
 
 function RootNavigator() {
   const { user, loading } = useAuth();
@@ -48,6 +49,7 @@ function RootNavigator() {
       {loading ? (
         <View style={styles.splash}>
           <ActivityIndicator size="large" color={palette.veld[600]} />
+          <Text style={styles.splashHint}>Starting Vision…</Text>
         </View>
       ) : null}
     </>
@@ -55,7 +57,9 @@ function RootNavigator() {
 }
 
 export default function RootLayout() {
-  const [fontsLoaded] = useFonts({
+  // Ionicons.font must be loaded explicitly in standalone APKs or tab/icons render blank.
+  const [fontsLoaded, fontError] = useFonts({
+    ...Ionicons.font,
     IBMPlexSerif_600SemiBold,
     IBMPlexSerif_700Bold,
     IBMPlexSans_400Regular,
@@ -63,11 +67,20 @@ export default function RootLayout() {
     IBMPlexSans_600SemiBold,
     IBMPlexSans_700Bold,
   });
+  // Never block the app forever if brand fonts fail — icon font is included above.
+  const [fontWaitExpired, setFontWaitExpired] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setFontWaitExpired(true), 6000);
+    return () => clearTimeout(t);
+  }, []);
 
-  if (!fontsLoaded) {
+  const fontsReady = fontsLoaded || Boolean(fontError) || fontWaitExpired;
+
+  if (!fontsReady) {
     return (
       <View style={styles.splash}>
         <ActivityIndicator size="large" color={palette.veld[600]} />
+        <Text style={styles.splashHint}>Loading…</Text>
       </View>
     );
   }
@@ -91,5 +104,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.page,
+    gap: 12,
+  },
+  splashHint: {
+    fontFamily: fontFamily.body,
+    fontSize: 14,
+    color: palette.veld[700],
   },
 });

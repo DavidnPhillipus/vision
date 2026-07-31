@@ -7,7 +7,7 @@
     "icon": "./assets/icon.png",
     "scheme": "vision",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -36,6 +36,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "9dcda7d8-b720-471c-a301-2869938c2ad1"
+      }
+    },
+    "owner": "davidphillipus"
   }
 }

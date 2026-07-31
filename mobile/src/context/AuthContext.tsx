@@ -36,7 +36,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    (async () => {
+    let cancelled = false;
+
+    async function restore() {
       try {
         const saved = await getStoredItem(TOKEN_KEY);
         const savedUser = await getStoredItem(USER_KEY);
@@ -57,7 +59,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         }
         try {
-          const me = await api.me(saved);
+          // Cap session check so a cold/slow API can't pin the splash screen.
+          const me = await Promise.race([
+            api.me(saved),
+            new Promise<never>((_, reject) =>
+              setTimeout(() => reject(new Error("session check timed out")), 8000),
+            ),
+          ]);
+          if (cancelled) return;
           setApiUserId(me.id);
           setUser(me);
           await setStoredItem(USER_KEY, JSON.stringify(me));
@@ -76,9 +85,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setApiUserId(null);
         await removeStoredItem(TOKEN_KEY);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
-    })();
+    }
+
+    void restore();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const applyAuth = useCallback(async (res: AuthResponse) => {

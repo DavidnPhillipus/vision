@@ -18,8 +18,20 @@ from app.config import settings
 from app.models import Camp
 from app.services import photo_service
 from app.services.llm import get_client as _client
+from app.services.text_clean import clean_string_list, strip_markdown
 
 MAX_TOOL_ROUNDS = 8
+
+
+def _clean_assessment_fields(final: dict) -> dict:
+    """Remove markdown stars from farmer-facing assessment text."""
+    for key in ("direct_answer", "recommendation", "status", "confidence"):
+        if key in final and isinstance(final[key], str):
+            final[key] = strip_markdown(final[key])
+    for key in ("reasons", "evidence", "limitations", "next_steps"):
+        if key in final:
+            final[key] = clean_string_list(final.get(key))
+    return final
 
 
 def _snapshots_from_results(results: dict) -> dict:
@@ -112,7 +124,7 @@ def run_assessment(
                     args = {}
 
                 if name == "submit_assessment":
-                    final = args
+                    final = _clean_assessment_fields(dict(args))
                     snaps = _snapshots_from_results(captured)
                     final["weather_snapshot"] = snaps["weather_snapshot"]
                     final["references"] = snaps["references"]
@@ -202,7 +214,7 @@ def run_chat(
             )
             msg = resp.choices[0].message
             if not msg.tool_calls:
-                return {"reply": msg.content or "", "tools_used": ctx.tools_used}
+                return {"reply": strip_markdown(msg.content or ""), "tools_used": ctx.tools_used}
 
             # Full dump keeps provider extras (e.g. Gemini thought_signature) intact.
             messages.append(msg.model_dump(exclude_none=True))

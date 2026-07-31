@@ -1,4 +1,4 @@
-import { fmt, metricTone, METRICS, type CompareResult } from "@vision/shared";
+import { fmt, forSpeech, metricTone, METRICS, stripMarkdown, type CompareResult } from "@vision/shared";
 import * as Speech from "expo-speech";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -123,9 +123,9 @@ export default function CompareScreen() {
         <>
           <SectionLabel>Vision&apos;s conclusion</SectionLabel>
           <Card style={styles.conclusion}>
-            <Text style={styles.conclusionText}>{result.conclusion}</Text>
+            <Text style={styles.conclusionText}>{stripMarkdown(result.conclusion)}</Text>
             <Pressable
-              onPress={() => Speech.speak(result.conclusion, { language: "en-GB" })}
+              onPress={() => Speech.speak(forSpeech(result.conclusion), { language: "en-GB" })}
               style={styles.listen}
             >
               <Ionicons name="volume-medium-outline" size={16} color={palette.veld[600]} />

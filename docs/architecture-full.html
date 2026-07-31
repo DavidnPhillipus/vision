@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Vision — Full System Architecture</title>
+  <style>
+    @page { size: A4; margin: 11mm 10mm; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      color: #1a2e24;
+      background: #fff;
+      font-size: 8.8pt;
+      line-height: 1.38;
+    }
+    .hero {
+      background: linear-gradient(135deg, #1F3A2E 0%, #2d5a45 55%, #3d7a5a 100%);
+      color: #f4f1ea;
+      border-radius: 10px;
+      padding: 14px 18px 12px;
+      margin-bottom: 10px;
+    }
+    .hero .eyebrow {
+      font-size: 7.5pt;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      opacity: 0.75;
+      margin: 0 0 4px;
+    }
+    .hero h1 {
+      margin: 0;
+      font-size: 18pt;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+    .hero p { margin: 5px 0 0; font-size: 9pt; opacity: 0.92; max-width: 52em; }
+    .meta { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+    .chip {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 999px;
+      padding: 2px 9px;
+      font-size: 7pt;
+    }
+    h2 {
+      font-size: 11pt;
+      margin: 0 0 6px;
+      color: #1F3A2E;
+      border-bottom: 2px solid #c5d4c8;
+      padding-bottom: 3px;
+    }
+    h3 { font-size: 9pt; margin: 0 0 4px; color: #2d5a45; }
+    section { margin-bottom: 9px; page-break-inside: avoid; }
+    .page-break { page-break-before: always; padding-top: 2px; }
+    table { width: 100%; border-collapse: collapse; font-size: 7.8pt; }
+    th, td {
+      border: 1px solid #d5e0d8;
+      padding: 4px 6px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #1F3A2E; color: #f4f1ea; font-weight: 600; }
+    tr:nth-child(even) td { background: #f6f8f5; }
+    .cols-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .cols-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 7px; }
+    .card {
+      background: #f6f8f5;
+      border: 1px solid #d5e0d8;
+      border-radius: 8px;
+      padding: 8px 9px;
+    }
+    .card ul, .flow ol { margin: 3px 0 0; padding-left: 1.15em; }
+    .card li, .flow li { margin-bottom: 1px; }
+    .flow {
+      border-left: 3px solid #2d5a45;
+      padding: 6px 10px;
+      background: #f6f8f5;
+      border-radius: 0 8px 8px 0;
+      font-size: 8pt;
+    }
+    footer {
+      margin-top: 8px;
+      padding-top: 6px;
+      border-top: 1px solid #d5e0d8;
+      font-size: 7pt;
+      color: #5a7264;
+      display: flex;
+      justify-content: space-between;
+    }
+    code {
+      font-family: Consolas, "Cascadia Mono", monospace;
+      font-size: 7.5pt;
+      background: #e8efe9;
+      padding: 0 3px;
+      border-radius: 2px;
+    }
+    .arch {
+      display: grid;
+      gap: 6px;
+      background: #f6f8f5;
+      border: 1px solid #d5e0d8;
+      border-radius: 8px;
+      padding: 9px;
+    }
+    .clients { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+    .box {
+      background: #fff;
+      border: 1.5px solid #2d5a45;
+      border-radius: 7px;
+      padding: 6px 8px;
+      text-align: center;
+    }
+    .box strong { display: block; color: #1F3A2E; font-size: 8.5pt; }
+    .box span { display: block; color: #5a7264; font-size: 7pt; margin-top: 1px; }
+    .box.api { background: #1F3A2E; border-color: #1F3A2E; }
+    .box.api strong { color: #f4f1ea; }
+    .box.api span { color: rgba(244,241,234,0.85); }
+    .box.svc { border-color: #8aa894; background: #eef4ef; }
+    .arrow { text-align: center; color: #5a7264; font-size: 7.5pt; font-weight: 600; }
+    .services { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+    .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .status {
+      border-radius: 7px;
+      padding: 6px 8px;
+      border: 1px solid #d5e0d8;
+      background: #fff;
+    }
+    .status b { display: block; font-size: 8.5pt; margin-bottom: 2px; }
+    .status.good { border-left: 4px solid #2f7d4a; }
+    .status.watch { border-left: 4px solid #c9a227; }
+    .status.concern { border-left: 4px solid #b5452c; }
+    .status.insuff { border-left: 4px solid #6b7c72; }
+    .note {
+      font-size: 7.5pt;
+      color: #3d5648;
+      background: #eef4ef;
+      border-radius: 6px;
+      padding: 5px 8px;
+      margin-top: 5px;
+    }
+    .tiny { font-size: 7.5pt; color: #5a7264; }
+    ol.tight { margin: 4px 0 0; padding-left: 1.2em; }
+    ol.tight li { margin-bottom: 2px; }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <p class="eyebrow">Deep Learning IndabaX Namibia 2026 · Full technical brief</p>
+    <h1>Vision — Full System Architecture</h1>
+    <p>
+      How the platform is structured, how the backend and AI agent work, how research vs farmer data
+      are used, and how grazing decisions (Good / Watch / High concern) are produced.
+    </p>
+    <div class="meta">
+      <span class="chip">FastAPI + Gemini tool-calling</span>
+      <span class="chip">Rule-based fallback</span>
+      <span class="chip">Supabase · Render · Vercel · EAS</span>
+      <span class="chip">Namibia rangeland research seed</span>
+    </div>
+  </header>
+
+  <section>
+    <h2>1. System topology</h2>
+    <div class="arch">
+      <div class="clients">
+        <div class="box"><strong>Website</strong><span>Next.js 15 · Vercel · /api proxy</span></div>
+        <div class="box"><strong>Mobile</strong><span>Expo 52 · EAS APK · direct HTTPS</span></div>
+      </div>
+      <div class="arrow">JWT Bearer auth · shared API client (@vision/shared)</div>
+      <div class="box api"><strong>Backend API</strong><span>FastAPI · agent · Docker on Render</span></div>
+      <div class="arrow">reads / writes</div>
+      <div class="services">
+        <div class="box svc"><strong>PostgreSQL</strong><span>Supabase pooler</span></div>
+        <div class="box svc"><strong>Gemini</strong><span>gemini-3.1-flash-lite</span></div>
+        <div class="box svc"><strong>Open-Meteo</strong><span>Rain + temperature</span></div>
+      </div>
+    </div>
+    <div class="cols-2" style="margin-top:7px">
+      <div class="card">
+        <h3>Request path</h3>
+        <ol class="tight">
+          <li>UI calls <code>/api/...</code> (web) or Render URL (mobile)</li>
+          <li>FastAPI validates JWT and ownership</li>
+          <li>Service layer runs agent / calcs / weather</li>
+          <li>Results persist in Postgres and return as JSON</li>
+        </ol>
+      </div>
+      <div class="card">
+        <h3>Live deploy</h3>
+        <ul>
+          <li><strong>Web:</strong> vision-kf45.vercel.app</li>
+          <li><strong>API:</strong> vision-52yf.onrender.com</li>
+          <li><strong>DB:</strong> Supabase Postgres</li>
+          <li><strong>Mobile:</strong> Expo project vision-namibia</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>2. Data model — farmer vs research</h2>
+    <div class="cols-2">
+      <div class="card">
+        <h3>Farmer-owned (their data)</h3>
+        <ul>
+          <li><strong>User</strong> → account (email, bcrypt hash)</li>
+          <li><strong>Farm</strong> → owned by user</li>
+          <li><strong>Camp</strong> → paddock: area, livestock, coords, grazing dates</li>
+          <li><strong>Assessment</strong> → verdict + evidence JSON snapshots</li>
+          <li><strong>CampPhoto</strong> → uploads + cached vision analysis</li>
+          <li><strong>ChatMessage</strong> → advisor history</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Research corpus (never claimed as the camp)</h3>
+        <ul>
+          <li><strong>~70</strong> reference plots (cover, biomass notes, ecoregion)</li>
+          <li><strong>~236</strong> cover rounds · <strong>~53</strong> species rows</li>
+          <li><strong>~888</strong> photo metadata records</li>
+          <li>Loaded from <code>reference_seed.json</code> (no raw 4GB dataset needed)</li>
+          <li>Always framed as <em>comparable research observations</em></li>
+        </ul>
+      </div>
+    </div>
+    <p class="note">
+      <strong>Honesty rule:</strong> research plots are matched by distance/ecoregion for context only.
+      The UI and prompts must never present them as the farmer’s own measurements.
+    </p>
+  </section>
+
+  <section>
+    <h2>3. End-to-end assessment flow</h2>
+    <div class="flow">
+      Farmer picks a camp → enters / confirms livestock → optional photos → <strong>Run assessment</strong>
+      <ol>
+        <li><code>POST /api/assessments</code> — auth + camp ownership check; optional herd update</li>
+        <li><code>assessment_service.create_assessment</code> calls the agent</li>
+        <li>Agent gathers evidence via tools (or rule engine if AI unavailable)</li>
+        <li>Structured verdict: status, direct answer, recommendation, reasons, evidence, confidence, limitations, next steps</li>
+        <li>Saved to <code>assessments</code> with snapshots: herd, weather, references, calculations, photo findings, engine name</li>
+        <li>Returned to website / mobile for display; farmer can follow up in Advisor chat</li>
+      </ol>
+    </div>
+  </section>
+
+  <section>
+    <h2>4. How the AI agent works</h2>
+    <div class="cols-2">
+      <div class="card">
+        <h3>Tool-calling loop</h3>
+        <ul>
+          <li>Model: Gemini via OpenAI-compatible SDK</li>
+          <li>Up to <strong>8</strong> tool rounds (<code>MAX_TOOL_ROUNDS</code>)</li>
+          <li><code>tool_choice=auto</code>; last round <strong>forces</strong> <code>submit_assessment</code></li>
+          <li>Final output is a function call — not free-form JSON</li>
+          <li>Statuses: Good · Watch · High concern · Insufficient data</li>
+          <li>Confidence: Low · Moderate · High</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Prompt framing</h3>
+        <ul>
+          <li>Separate farmer data, weather, research, photos, calcs, AI conclusions</li>
+          <li>Cautious language (“may indicate”, “based on available evidence”)</li>
+          <li>Photos never invent exact biomass / grass % / grazing days left</li>
+          <li>Missing weather: say so and continue</li>
+          <li>Low confidence → recommend field inspection / extension officer</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAGE 2 -->
+  <section class="page-break">
+    <h2>5. Agent tools (evidence sources)</h2>
+    <table>
+      <tr><th style="width:26%">Tool</th><th style="width:44%">What it does</th><th>Source label</th></tr>
+      <tr><td><code>get_farm_and_camp</code></td><td>Farm + camp herd, area, coords, grazing</td><td>farmer-provided</td></tr>
+      <tr><td><code>list_camps</code></td><td>All camps on a farm</td><td>farmer-provided</td></tr>
+      <tr><td><code>search_dataset</code></td><td>Free-text / ecoregion research search</td><td>historical dataset (research plots)</td></tr>
+      <tr><td><code>find_comparable_plots</code></td><td>Top similar plots (distance + ecoregion)</td><td>comparable research plots</td></tr>
+      <tr><td><code>check_rainfall</code></td><td>7 / 14 / 30-day past + 7-day forecast rain</td><td>live weather (Open-Meteo)</td></tr>
+      <tr><td><code>check_weather_context</code></td><td>Temperature + drought hint from 30d rain</td><td>live weather (Open-Meteo)</td></tr>
+      <tr><td><code>calculate_livestock_per_hectare</code></td><td>LSU and stocking density</td><td>deterministic calculation</td></tr>
+      <tr><td><code>calculate_grazing_duration</code></td><td>Days since grazing start</td><td>deterministic calculation</td></tr>
+      <tr><td><code>get_previous_assessments</code></td><td>Last 5 assessments for the camp</td><td>previous assessments</td></tr>
+      <tr><td><code>compare_camps</code></td><td>Side-by-side camps on a farm</td><td>mixed sources</td></tr>
+      <tr><td><code>analyze_photos</code></td><td>Vision buckets (density, soil, dryness…)</td><td>visual photo observations</td></tr>
+      <tr><td><code>submit_assessment</code></td><td>Final structured verdict (assessment only)</td><td>—</td></tr>
+    </table>
+    <p class="tiny" style="margin:5px 0 0">
+      Matching: haversine distance; −400 score bonus for ecoregion match; labels like “geographically nearby” (≤60 km).
+      LSU: 1 cattle = 1.0 LSU; 6 goats/sheep = 1.0 LSU (Namibian extension convention).
+    </p>
+  </section>
+
+  <section>
+    <h2>6. How decisions are made</h2>
+    <div class="status-grid">
+      <div class="status good"><b>Good</b>Camp can currently sustain the herd under available evidence.</div>
+      <div class="status watch"><b>Watch</b>Early pressure or decline — monitor and plan changes.</div>
+      <div class="status concern"><b>High concern</b>Strong overgrazing / drought stress signals — act soon.</div>
+      <div class="status insuff"><b>Insufficient data</b>Not enough evidence to judge responsibly.</div>
+    </div>
+
+    <div class="cols-2" style="margin-top:7px">
+      <div class="card">
+        <h3>A) Gemini path (preferred)</h3>
+        <ol class="tight">
+          <li>Model chooses which tools to call</li>
+          <li>Builds evidence items labelled by source</li>
+          <li>Calls <code>submit_assessment</code> with status + confidence</li>
+          <li>Backend overlays tool snapshots onto the saved row</li>
+        </ol>
+        <p class="tiny" style="margin-top:4px">If the loop ends without submit, or the LLM errors → fallback.</p>
+      </div>
+      <div class="card">
+        <h3>B) Rule-based fallback (always available)</h3>
+        <p class="tiny">Used when no API key, LLM fails, or tools never submit.</p>
+        <ul>
+          <li>Always computes LSU/ha, grazing days, weather, comparable plots (+ photos if any)</li>
+          <li>Adds a <strong>concern</strong> score from thresholds below</li>
+          <li>Maps score → status with template recommendations</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>7. Fallback scoring rules (transparent thresholds)</h2>
+    <div class="cols-3">
+      <div class="card">
+        <h3>Livestock pressure</h3>
+        <ul>
+          <li>LSU/ha ≥ <strong>0.25</strong> → concern +2</li>
+          <li>LSU/ha ≥ <strong>0.12</strong> → concern +1</li>
+          <li>Below that → low pressure</li>
+          <li>Missing area → limitation (no LSU/ha)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Rainfall (30-day)</h3>
+        <ul>
+          <li>&lt; <strong>10 mm</strong> → +2 (or +1 if no herd)</li>
+          <li>&lt; <strong>40 mm</strong> → +1 (if herd)</li>
+          <li>Else → reasonable rainfall reason</li>
+          <li>Weather unavailable → continue, note it</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Plots &amp; photos</h3>
+        <ul>
+          <li>Avg grass cover of refs &lt; <strong>25%</strong> → +1</li>
+          <li>Photo grass = sparse → +1</li>
+          <li>Photo exposed soil = high → +1</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="margin-top:7px">
+      <h3>Status mapping from concern score</h3>
+      <ul>
+        <li>No known signals → <strong>Insufficient data</strong> (Low confidence)</li>
+        <li>No herd (rested): concern ≥ 2 → Watch, else Good</li>
+        <li>With herd: concern ≥ 4 → <strong>High concern</strong>; ≥ 2 → <strong>Watch</strong>; else <strong>Good</strong></li>
+        <li>Next steps always include walk-the-camp; extension officer if Watch / High concern with a herd</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>8. Photos, chat, and offline clients</h2>
+    <div class="cols-3">
+      <div class="card">
+        <h3>Photos (vision)</h3>
+        <ul>
+          <li>Optional; strengthen, never replace other evidence</li>
+          <li>Buckets only: grass density, dryness, exposed soil, woody density, erosion signs</li>
+          <li>Analysis cached on <code>CampPhoto</code></li>
+          <li>No LLM → all “uncertain”</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Advisor chat</h3>
+        <ul>
+          <li><code>POST /api/chat</code> — same tools, no <code>submit_assessment</code></li>
+          <li>Free-text reply; last 8 history turns</li>
+          <li>Needs Gemini (no rule-engine verdict)</li>
+          <li>Persists user + assistant messages</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Offline (shared client)</h3>
+        <ul>
+          <li>Cache farms, camps, past assessments</li>
+          <li>Queue camp create/update offline</li>
+          <li>Online-only: login, assess, chat, photos, weather</li>
+          <li>Read timeout ~18s · write ~90s</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>9. Tech stack &amp; tools summary</h2>
+    <table>
+      <tr><th style="width:18%">Layer</th><th>Stack / tools</th></tr>
+      <tr><td>API</td><td>Python 3.12, FastAPI, Uvicorn, SQLAlchemy 2, Alembic, Pydantic, JWT + bcrypt, pandas, Pillow, httpx, OpenAI SDK</td></tr>
+      <tr><td>AI</td><td>Google Gemini <code>gemini-3.1-flash-lite</code> (tool calling + vision); deterministic fallback engine</td></tr>
+      <tr><td>Weather</td><td>Open-Meteo (cached ~1h, never blocks assessment on failure)</td></tr>
+      <tr><td>Database</td><td>PostgreSQL via Supabase session pooler</td></tr>
+      <tr><td>Website</td><td>Next.js 15, React 19, TypeScript, Tailwind, Leaflet, Recharts</td></tr>
+      <tr><td>Mobile</td><td>Expo Router, Secure Store, AsyncStorage, NetInfo, Image Picker, Location, Speech</td></tr>
+      <tr><td>Shared</td><td><code>@vision/shared</code> — API client, offline cache/queue, design tokens</td></tr>
+      <tr><td>Deploy</td><td>GitHub · Supabase · Render (Docker) · Vercel · Expo EAS</td></tr>
+      <tr><td>Auth</td><td>HS256 JWT (~14 days); demo <code>demo@vision.na</code> / <code>vision123</code></td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>10. Backend modules (where the logic lives)</h2>
+    <div class="cols-2">
+      <div class="card">
+        <h3>API</h3>
+        <ul>
+          <li><code>api/auth.py</code> · <code>farms.py</code> · <code>camps.py</code></li>
+          <li><code>api/assessments.py</code> · <code>chat.py</code> · <code>compare.py</code></li>
+          <li><code>api/photos.py</code> · <code>dataset.py</code></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Agent &amp; services</h3>
+        <ul>
+          <li><code>agent/agent.py</code> · <code>tools.py</code> · <code>prompts.py</code> · <code>fallback.py</code></li>
+          <li><code>services/assessment_service.py</code> · <code>matching_service.py</code></li>
+          <li><code>calc_service.py</code> · <code>weather_service.py</code> · <code>llm.py</code> · <code>photo_service.py</code></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Vision · Full System Architecture</span>
+    <span>IndabaX Namibia 2026 · Transparent, evidence-labelled grazing advice</span>
+  </footer>
+</body>
+</html>

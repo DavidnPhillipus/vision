@@ -1,5 +1,6 @@
 "use client";
 
+import { stripMarkdown } from "@vision/shared";
 import * as React from "react";
 import Link from "next/link";
 import { useFarm } from "@/components/providers";
@@ -121,8 +122,10 @@ export default function ComparePage() {
         <>
           <SoftPanel className="border-l-4 border-l-veld-600">
             <p className="text-sm font-semibold uppercase tracking-wider text-veld-600/70">Vision&apos;s conclusion</p>
-            <p className="mt-2 text-xl leading-relaxed text-veld-800 md:text-2xl">{result.conclusion}</p>
-            <AssessmentSpeak status="Compare" answer={result.conclusion} recommendation={null} />
+            <p className="mt-2 text-xl leading-relaxed text-veld-800 md:text-2xl">
+              {stripMarkdown(result.conclusion)}
+            </p>
+            <AssessmentSpeak answer={result.conclusion} recommendation={null} />
           </SoftPanel>
 
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">

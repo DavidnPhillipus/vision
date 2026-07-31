@@ -1,3 +1,4 @@
+import { stripMarkdown } from "@vision/shared";
 import { CheckCircle2, ListChecks, FileText, AlertCircle, FlaskConical, CloudRain } from "lucide-react";
 import { StatusBadge, ConfidencePill } from "@/components/status-badge";
 import { Card, CardTitle } from "@/components/ui/card";
@@ -6,10 +7,11 @@ import type { Assessment } from "@/lib/api";
 import { fmt } from "@/lib/utils";
 
 function List({ items }: { items: string[] }) {
-  if (!items?.length) return <p className="text-sm text-veld-600/60">—</p>;
+  const cleaned = (items || []).map((t) => stripMarkdown(t)).filter(Boolean);
+  if (!cleaned.length) return <p className="text-sm text-veld-600/60">—</p>;
   return (
     <ul className="space-y-1.5">
-      {items.map((t, i) => (
+      {cleaned.map((t, i) => (
         <li key={i} className="flex gap-2 text-sm text-veld-800">
           <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-veld-400" />
           <span>{t}</span>
@@ -32,14 +34,16 @@ export function AssessmentView({ a }: { a: Assessment }) {
             {new Date(a.created_at).toLocaleString()}
           </span>
         </div>
-        {a.direct_answer ? <p className="mt-3 text-lg text-veld-800">{a.direct_answer}</p> : null}
+        {a.direct_answer ? (
+          <p className="mt-3 text-lg text-veld-800">{stripMarkdown(a.direct_answer)}</p>
+        ) : null}
         {a.recommendation ? (
           <div className="mt-3 rounded-lg bg-veld-50 p-4 ring-1 ring-veld-100">
             <p className="text-sm font-semibold text-veld-600">Recommendation</p>
-            <p className="mt-1 text-veld-800">{a.recommendation}</p>
+            <p className="mt-1 text-veld-800">{stripMarkdown(a.recommendation)}</p>
           </div>
         ) : null}
-        <AssessmentSpeak status={a.status} answer={a.direct_answer} recommendation={a.recommendation} />
+        <AssessmentSpeak answer={a.direct_answer} recommendation={a.recommendation} />
       </Card>
 
       <div className="grid gap-4 md:grid-cols-2">

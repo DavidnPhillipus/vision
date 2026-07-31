@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Vision — Architecture & Tech Stack</title>
+  <style>
+    @page { size: A4; margin: 12mm; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      color: #1a2e24;
+      background: #fff;
+      font-size: 10pt;
+      line-height: 1.4;
+    }
+    .hero {
+      background: linear-gradient(135deg, #1F3A2E 0%, #2d5a45 55%, #3d7a5a 100%);
+      color: #f4f1ea;
+      border-radius: 12px;
+      padding: 18px 22px 16px;
+      margin-bottom: 14px;
+    }
+    .hero .eyebrow {
+      font-size: 8pt;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      opacity: 0.75;
+      margin: 0 0 5px;
+    }
+    .hero h1 {
+      margin: 0;
+      font-size: 22pt;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+    .hero p { margin: 7px 0 0; font-size: 10pt; opacity: 0.92; max-width: 48em; }
+    .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 11px; }
+    .chip {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 7.5pt;
+    }
+    h2 {
+      font-size: 11.5pt;
+      margin: 0 0 8px;
+      color: #1F3A2E;
+      border-bottom: 2px solid #c5d4c8;
+      padding-bottom: 4px;
+    }
+    h3 { font-size: 9.5pt; margin: 0 0 6px; color: #2d5a45; }
+    section { margin-bottom: 12px; page-break-inside: avoid; }
+    table { width: 100%; border-collapse: collapse; font-size: 8.5pt; }
+    th, td {
+      border: 1px solid #d5e0d8;
+      padding: 5px 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #1F3A2E; color: #f4f1ea; font-weight: 600; width: 18%; }
+    tr:nth-child(even) td { background: #f6f8f5; }
+    .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .card {
+      background: #f6f8f5;
+      border: 1px solid #d5e0d8;
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+    .card ul { margin: 0; padding-left: 1.1em; }
+    .card li { margin-bottom: 2px; font-size: 9pt; }
+    .flow {
+      border-left: 4px solid #2d5a45;
+      padding: 8px 12px;
+      font-size: 8.5pt;
+      background: #f6f8f5;
+      border-radius: 0 8px 8px 0;
+    }
+    .flow ol { margin: 5px 0 0; padding-left: 1.2em; }
+    .flow li { margin-bottom: 2px; }
+    footer {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid #d5e0d8;
+      font-size: 7.5pt;
+      color: #5a7264;
+      display: flex;
+      justify-content: space-between;
+    }
+    code {
+      font-family: Consolas, "Cascadia Mono", monospace;
+      font-size: 8pt;
+      background: #e8efe9;
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+    .arch {
+      display: grid;
+      gap: 8px;
+      background: #f6f8f5;
+      border: 1px solid #d5e0d8;
+      border-radius: 10px;
+      padding: 12px;
+    }
+    .clients {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .box {
+      background: #fff;
+      border: 1.5px solid #2d5a45;
+      border-radius: 8px;
+      padding: 8px 10px;
+      text-align: center;
+    }
+    .box strong { display: block; color: #1F3A2E; font-size: 9.5pt; }
+    .box span { display: block; color: #5a7264; font-size: 7.5pt; margin-top: 2px; }
+    .box.api {
+      background: #1F3A2E;
+      color: #f4f1ea;
+      border-color: #1F3A2E;
+    }
+    .box.api strong { color: #f4f1ea; }
+    .box.api span { color: rgba(244,241,234,0.8); }
+    .arrow {
+      text-align: center;
+      color: #5a7264;
+      font-size: 8pt;
+      font-weight: 600;
+    }
+    .services {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+    .box.svc { border-color: #8aa894; background: #eef4ef; }
+    .live div {
+      background: #eef4ef;
+      border-radius: 8px;
+      padding: 6px 8px;
+      font-size: 7.5pt;
+      margin-bottom: 4px;
+      word-break: break-all;
+    }
+    .live div:last-child { margin-bottom: 0; }
+    .live strong {
+      display: block;
+      font-size: 7pt;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #5a7264;
+      margin-bottom: 1px;
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <p class="eyebrow">Deep Learning IndabaX Namibia 2026</p>
+    <h1>Vision</h1>
+    <p>AI Rangeland &amp; Livestock Advisor — architecture, tech stack, and deployment tools.</p>
+    <div class="meta">
+      <span class="chip">Monorepo</span>
+      <span class="chip">FastAPI + Gemini</span>
+      <span class="chip">Next.js + Expo</span>
+      <span class="chip">Supabase · Render · Vercel · EAS</span>
+    </div>
+  </header>
+
+  <section>
+    <h2>1. System architecture</h2>
+    <div class="arch">
+      <div class="clients">
+        <div class="box">
+          <strong>Website</strong>
+          <span>Next.js 15 · Vercel</span>
+        </div>
+        <div class="box">
+          <strong>Mobile</strong>
+          <span>Expo / React Native · EAS APK</span>
+        </div>
+      </div>
+      <div class="arrow">API_PROXY_URL / EXPO_PUBLIC_API_URL</div>
+      <div class="box api">
+        <strong>Backend API</strong>
+        <span>FastAPI + tool-calling agent · Render (Docker)</span>
+      </div>
+      <div class="arrow">connects to</div>
+      <div class="services">
+        <div class="box svc"><strong>PostgreSQL</strong><span>Supabase pooler</span></div>
+        <div class="box svc"><strong>Gemini LLM</strong><span>Tool calling + vision</span></div>
+        <div class="box svc"><strong>Open-Meteo</strong><span>Live weather</span></div>
+      </div>
+    </div>
+
+    <div class="cols" style="margin-top:10px">
+      <div class="card">
+        <h3>Repository layout</h3>
+        <ul>
+          <li><strong>backend/</strong> — FastAPI API, AI agent, ETL, auth</li>
+          <li><strong>frontend/</strong> — Next.js website</li>
+          <li><strong>mobile/</strong> — Expo / React Native app</li>
+          <li><strong>shared/</strong> — types, API client, tokens, offline helpers</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Live endpoints</h3>
+        <div class="live">
+          <div><strong>Website</strong> https://vision-kf45.vercel.app</div>
+          <div><strong>API</strong> https://vision-52yf.onrender.com</div>
+          <div><strong>Mobile</strong> Expo · vision-namibia (EAS APK)</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>2. Assessment data flow</h2>
+    <div class="flow">
+      Farmer opens Vision → picks a camp → enters livestock → (optional photos) → runs assessment
+      <ol>
+        <li>Backend loads camp (farmer-provided data)</li>
+        <li>Fetches live Open-Meteo weather for camp coordinates</li>
+        <li>Searches seed data for comparable research plots</li>
+        <li>Computes livestock/ha (LSU) and grazing duration</li>
+        <li>Gemini tool-calling agent combines evidence into a structured assessment</li>
+        <li>Result saved to PostgreSQL with evidence, confidence, and limitations</li>
+        <li>Farmer can ask follow-ups in the AI advisor chat</li>
+      </ol>
+    </div>
+  </section>
+
+  <section>
+    <h2>3. Tech stack</h2>
+    <table>
+      <tr><th>Layer</th><th>Technologies</th></tr>
+      <tr><td>API</td><td>Python 3.12, FastAPI, Uvicorn, Pydantic, SQLAlchemy 2, Alembic, psycopg2, JWT + bcrypt, pandas, Pillow, httpx, OpenAI SDK</td></tr>
+      <tr><td>AI</td><td>Google Gemini (<code>gemini-3.1-flash-lite</code>) via OpenAI-compatible API; rule-based fallback without a key</td></tr>
+      <tr><td>Weather</td><td>Open-Meteo (no API key)</td></tr>
+      <tr><td>Database</td><td>PostgreSQL — Supabase session pooler (production); optional local Docker Postgres 16</td></tr>
+      <tr><td>Website</td><td>Next.js 15, React 19, TypeScript, Tailwind CSS, Leaflet, Recharts, Lucide</td></tr>
+      <tr><td>Mobile</td><td>Expo 52, Expo Router, React Native 0.76, Secure Store, AsyncStorage, NetInfo, Image Picker, Location, Speech</td></tr>
+      <tr><td>Shared</td><td>TypeScript package <code>@vision/shared</code> — API client, offline cache/queue, theme tokens</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>4. Deployment &amp; tools</h2>
+    <table>
+      <tr><th>Role</th><th>Tool</th></tr>
+      <tr><td>Source control</td><td>GitHub</td></tr>
+      <tr><td>Database hosting</td><td>Supabase</td></tr>
+      <tr><td>API hosting</td><td>Render (Docker / Python 3.12)</td></tr>
+      <tr><td>Website hosting</td><td>Vercel (root: <code>frontend</code>, env: <code>API_PROXY_URL</code>)</td></tr>
+      <tr><td>Mobile builds</td><td>Expo EAS Build (Android preview APK)</td></tr>
+      <tr><td>Local database (optional)</td><td>Docker Compose</td></tr>
+      <tr><td>AI keys</td><td>Google AI Studio</td></tr>
+      <tr><td>Local development</td><td>Node.js 18+, Python 3.12+, Expo Go / EAS CLI</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>5. Backend building blocks</h2>
+    <div class="cols">
+      <div class="card">
+        <h3>API modules</h3>
+        <ul>
+          <li>Auth (register / login / JWT)</li>
+          <li>Farms &amp; camps</li>
+          <li>Assessments</li>
+          <li>Advisor chat</li>
+          <li>Camp compare</li>
+          <li>Photos &amp; dataset</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Agent &amp; data</h3>
+        <ul>
+          <li>Tool-calling loop + prompts</li>
+          <li>Rule-based fallback engine</li>
+          <li>Reference seed → Postgres ETL</li>
+          <li>Demo farm seed</li>
+          <li>Weather &amp; calc services</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Vision · Architecture &amp; Tech Stack</span>
+    <span>IndabaX Namibia 2026 · Demo: demo@vision.na / vision123</span>
+  </footer>
+</body>
+</html>

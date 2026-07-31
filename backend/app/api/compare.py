@@ -10,6 +10,7 @@ from app.schemas import CompareRequest, CompareResponse
 from app.services.auth_service import get_current_user
 from app.services.llm import get_client
 from app.services.ownership import get_owned_camp
+from app.services.text_clean import strip_markdown
 from app.models.user import User
 
 router = APIRouter(prefix="/compare", tags=["compare"])
@@ -66,7 +67,8 @@ def compare(
                 "You are Vision, a Namibian rangeland advisor. Compare these camps and give ONE "
                 "short, practical conclusion for the farmer about which camp to rest first and why "
                 "(livestock pressure, rainfall, condition). Use cautious wording and note it is an "
-                "estimate. 2-3 sentences.\n\n" + json.dumps(camps, default=str)
+                "estimate. 2-3 sentences. Plain text only — no markdown, no **bold** stars.\n\n"
+                + json.dumps(camps, default=str)
             )
             resp = client.chat.completions.create(
                 model=settings.openai_model,
@@ -81,4 +83,9 @@ def compare(
     else:
         conclusion = _rule_conclusion(camps)
 
-    return CompareResponse(camps=camps, conclusion=conclusion, tools_used=tools_used)
+    return CompareResponse(
+        camps=camps,
+        conclusion=strip_markdown(conclusion),
+        tools_used=tools_used,
+    )
+

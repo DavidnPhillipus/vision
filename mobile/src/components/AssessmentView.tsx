@@ -1,4 +1,4 @@
-import { fmt, formatDateTime, type Assessment } from "@vision/shared";
+import { fmt, forSpeech, formatDateTime, stripMarkdown, type Assessment } from "@vision/shared";
 import * as Speech from "expo-speech";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -16,13 +16,14 @@ function Section({
   title: string;
   items: string[];
 }) {
+  const cleaned = (items || []).map((t) => stripMarkdown(t)).filter(Boolean);
   return (
     <Card>
       <View style={styles.sectionHead}>
         <Ionicons name={icon} size={16} color={palette.veld[600]} />
         <CardTitle>{title}</CardTitle>
       </View>
-      {items?.length ? <BulletList items={items} /> : <Text style={styles.dash}>—</Text>}
+      {cleaned.length ? <BulletList items={cleaned} /> : <Text style={styles.dash}>—</Text>}
     </Card>
   );
 }
@@ -40,13 +41,8 @@ export function AssessmentView({ a }: { a: Assessment }) {
   const w = a.weather_snapshot;
   const engine = (a.calculations?.engine as string) || "";
 
-  const spoken = [
-    `Status: ${a.status}.`,
-    a.direct_answer || "",
-    a.recommendation ? `Recommendation: ${a.recommendation}` : "",
-  ]
-    .filter(Boolean)
-    .join(" ");
+  // Speak only the AI answer (+ recommendation) — not status badges or evidence lists.
+  const spoken = [forSpeech(a.direct_answer), forSpeech(a.recommendation)].filter(Boolean).join(" ");
 
   return (
     <View>
@@ -57,19 +53,21 @@ export function AssessmentView({ a }: { a: Assessment }) {
         </View>
         <Text style={styles.timestamp}>{formatDateTime(a.created_at)}</Text>
 
-        {a.direct_answer ? <Text style={styles.answer}>{a.direct_answer}</Text> : null}
+        {a.direct_answer ? <Text style={styles.answer}>{stripMarkdown(a.direct_answer)}</Text> : null}
 
         {a.recommendation ? (
           <View style={styles.recommendation}>
             <Text style={styles.recommendationLabel}>Recommendation</Text>
-            <Text style={styles.recommendationText}>{a.recommendation}</Text>
+            <Text style={styles.recommendationText}>{stripMarkdown(a.recommendation)}</Text>
           </View>
         ) : null}
 
-        <Pressable onPress={() => Speech.speak(spoken, { language: "en-GB" })} style={styles.listen}>
-          <Ionicons name="volume-medium-outline" size={16} color={palette.veld[600]} />
-          <Text style={styles.listenText}>Listen to result</Text>
-        </Pressable>
+        {spoken ? (
+          <Pressable onPress={() => Speech.speak(spoken, { language: "en-GB" })} style={styles.listen}>
+            <Ionicons name="volume-medium-outline" size={16} color={palette.veld[600]} />
+            <Text style={styles.listenText}>Listen to answer</Text>
+          </Pressable>
+        ) : null}
       </Card>
 
       <Section icon="list-outline" title="Reasons" items={a.reasons} />

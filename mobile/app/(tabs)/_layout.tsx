@@ -27,8 +27,12 @@ export default function TabsLayout() {
         },
         tabBarLabelStyle: { fontSize: 11, fontFamily: fontFamily.bodySemi },
         sceneContainerStyle: { backgroundColor: colors.page },
-        tabBarIcon: ({ color, size }) => (
-          <Ionicons name={ICONS[route.name] || "ellipse-outline"} size={size} color={color} />
+        tabBarIcon: ({ color, size, focused }) => (
+          <Ionicons
+            name={ICONS[route.name] || "ellipse-outline"}
+            size={focused ? size + 1 : size}
+            color={color}
+          />
         ),
       })}
     >

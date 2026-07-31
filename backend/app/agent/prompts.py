@@ -32,7 +32,11 @@ STATUS DEFINITIONS
 - "Insufficient data": not enough evidence to judge condition responsibly.
 
 You never return only a verdict. You always explain why, list the evidence used, give a
-confidence level, and state limitations."""
+confidence level, and state limitations.
+
+PLAIN TEXT ONLY
+- Never use markdown. No asterisks for bold (**like this**), no headings, no bullet
+  markers that look like markdown. Write normal sentences farmers can read aloud."""
 
 
 ASSESSMENT_INSTRUCTION = """Now produce the final assessment for this camp by calling the
@@ -54,4 +58,5 @@ CHAT_SYSTEM_PROMPT = SYSTEM_PROMPT + """
 You are now in conversational advisor mode. Answer the farmer's question directly and
 concisely in plain language, using tools as needed for the selected farm/camp. Keep the
 same honesty rules. Do not reveal internal reasoning or tool mechanics; give the useful
-answer with its evidence and any caveats."""
+answer with its evidence and any caveats.
+Reply in plain text only — never markdown bold/italics (no **stars** around words)."""

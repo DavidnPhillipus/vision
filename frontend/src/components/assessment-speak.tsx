@@ -1,28 +1,25 @@
 "use client";
 
 import * as React from "react";
+import { forSpeech } from "@vision/shared";
 import { SpeakButton } from "@/components/speech-controls";
 import { useTextToSpeech } from "@/hooks/use-speech";
 
+/** Speaks only the AI answer (and recommendation if present) — not badges, evidence, weather. */
 export function AssessmentSpeak({
-  status,
   answer,
   recommendation,
 }: {
-  status: string;
+  status?: string;
   answer?: string | null;
   recommendation?: string | null;
 }) {
   const tts = useTextToSpeech({ lang: "en-GB", rate: 0.95 });
 
   const script = React.useMemo(() => {
-    const parts = [
-      `Assessment status: ${status}.`,
-      answer ? `Vision says: ${answer}` : "",
-      recommendation ? `Main recommendation: ${recommendation}` : "",
-    ].filter(Boolean);
+    const parts = [forSpeech(answer), forSpeech(recommendation)].filter(Boolean);
     return parts.join(" ");
-  }, [status, answer, recommendation]);
+  }, [answer, recommendation]);
 
   if (!script.trim()) return null;
 
@@ -34,7 +31,7 @@ export function AssessmentSpeak({
         if (tts.speaking) tts.stop();
         else tts.speak(script);
       }}
-      label="Listen to result"
+      label="Listen to answer"
       className="mt-3"
     />
   );

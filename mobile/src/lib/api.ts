@@ -18,9 +18,17 @@ export type {
   Weather,
 } from "@vision/shared";
 
+const PRODUCTION_API = "https://vision-52yf.onrender.com";
+
 function resolveApiBase(): string {
   const fromEnv = (process.env.EXPO_PUBLIC_API_URL || "").trim();
   if (fromEnv) return fromEnv.replace(/\/$/, "");
+
+  // Standalone APK/IPA builds must not fall back to emulator/LAN URLs.
+  const appOwnership = Constants.appOwnership; // "expo" in Expo Go, null in standalone
+  if (appOwnership !== "expo") {
+    return PRODUCTION_API;
+  }
 
   const hostUri = Constants.expoConfig?.hostUri || Constants.experienceUrl || "";
   const host = hostUri.replace(/^[a-z]+:\/\//, "").split(":")[0];

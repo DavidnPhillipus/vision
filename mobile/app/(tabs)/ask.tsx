@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { ADVISOR_GREETING, ASK_SUGGESTIONS } from "@vision/shared";
+import { ADVISOR_GREETING, ASK_SUGGESTIONS, forSpeech, stripMarkdown } from "@vision/shared";
 import * as Speech from "expo-speech";
 import { useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -80,8 +80,10 @@ export default function AskScreen() {
           message,
           history,
         });
-        setMessages([...next, { role: "assistant", content: res.reply }]);
-        if (readAloud) Speech.speak(res.reply, { language: "en-GB" });
+        const reply = stripMarkdown(res.reply);
+        setMessages([...next, { role: "assistant", content: reply }]);
+        // Speak only the AI reply text — not camp chips, toggles, or other UI.
+        if (readAloud) Speech.speak(forSpeech(reply), { language: "en-GB" });
       } catch (e) {
         setMessages([
           ...next,
@@ -167,9 +169,9 @@ export default function AskScreen() {
                 <Image source={logo} style={styles.avatar} accessibilityLabel="Vision" />
                 <View style={[styles.bubble, styles.bubbleTheirs]}>
                   <Text style={styles.avatarLabel}>Vision</Text>
-                  <Text style={styles.bubbleText}>{item.content}</Text>
+                  <Text style={styles.bubbleText}>{stripMarkdown(item.content)}</Text>
                   <Pressable
-                    onPress={() => Speech.speak(item.content, { language: "en-GB" })}
+                    onPress={() => Speech.speak(forSpeech(item.content), { language: "en-GB" })}
                     style={styles.listen}
                   >
                     <Ionicons name="volume-medium-outline" size={14} color={palette.veld[600]} />

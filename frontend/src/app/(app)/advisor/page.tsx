@@ -1,6 +1,6 @@
 "use client";
 
-import { ASK_SUGGESTIONS } from "@vision/shared";
+import { ASK_SUGGESTIONS, forSpeech, stripMarkdown } from "@vision/shared";
 import * as React from "react";
 import { Suspense } from "react";
 import Link from "next/link";
@@ -71,11 +71,13 @@ function AdvisorChat() {
         history,
       });
       setMessages((m) => {
-        const next = [...m, { role: "assistant" as const, content: res.reply }];
+        const reply = stripMarkdown(res.reply);
+        const next = [...m, { role: "assistant" as const, content: reply }];
         if (tts.autoSpeak && tts.supported) {
           queueMicrotask(() => {
             setActiveSpeakIndex(next.length - 1);
-            tts.speak(res.reply);
+            // Speak only the AI reply — not labels, suggestions, or other UI text.
+            tts.speak(forSpeech(reply));
           });
         }
         return next;
@@ -102,7 +104,7 @@ function AdvisorChat() {
       return;
     }
     setActiveSpeakIndex(index);
-    tts.speak(content);
+    tts.speak(forSpeech(content));
   }
 
   const displayInput = stt.listening && stt.interim ? `${input}${input ? " " : ""}${stt.interim}` : input;

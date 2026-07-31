@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Vision — Features: Now &amp; Next</title>
+  <style>
+    @page { size: A4; margin: 11mm 10mm; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      color: #1a2e24;
+      background: #fff;
+      font-size: 8.8pt;
+      line-height: 1.38;
+    }
+    .hero {
+      background: linear-gradient(135deg, #1F3A2E 0%, #2d5a45 55%, #3d7a5a 100%);
+      color: #f4f1ea;
+      border-radius: 10px;
+      padding: 14px 18px 12px;
+      margin-bottom: 10px;
+    }
+    .hero .eyebrow {
+      font-size: 7.5pt;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      opacity: 0.75;
+      margin: 0 0 4px;
+    }
+    .hero h1 {
+      margin: 0;
+      font-size: 18pt;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+    .hero p { margin: 5px 0 0; font-size: 9pt; opacity: 0.92; max-width: 52em; }
+    .meta { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+    .chip {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 999px;
+      padding: 2px 9px;
+      font-size: 7pt;
+    }
+    h2 {
+      font-size: 11pt;
+      margin: 0 0 6px;
+      color: #1F3A2E;
+      border-bottom: 2px solid #c5d4c8;
+      padding-bottom: 3px;
+    }
+    h3 { font-size: 9pt; margin: 0 0 4px; color: #2d5a45; }
+    section { margin-bottom: 9px; page-break-inside: avoid; }
+    .page-break { page-break-before: always; }
+    .cols-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .cols-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 7px; }
+    .card {
+      background: #f6f8f5;
+      border: 1px solid #d5e0d8;
+      border-radius: 8px;
+      padding: 8px 9px;
+    }
+    .card ul { margin: 3px 0 0; padding-left: 1.15em; }
+    .card li { margin-bottom: 2px; }
+    .tag {
+      display: inline-block;
+      font-size: 6.5pt;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border-radius: 4px;
+      padding: 1px 5px;
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+    .tag.now { background: #d4e8da; color: #1F3A2E; }
+    .tag.web { background: #dde8f5; color: #1e3a5f; }
+    .tag.mob { background: #efe4d0; color: #5c4010; }
+    .tag.both { background: #e0ddd8; color: #333; }
+    .tag.next { background: #f0e2c8; color: #6a4a12; }
+    .tag.adv { background: #e8d4ef; color: #5a2d6b; }
+    footer {
+      margin-top: 8px;
+      padding-top: 6px;
+      border-top: 1px solid #d5e0d8;
+      font-size: 7pt;
+      color: #5a7264;
+      display: flex;
+      justify-content: space-between;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 7.7pt; }
+    th, td {
+      border: 1px solid #d5e0d8;
+      padding: 4px 6px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #1F3A2E; color: #f4f1ea; font-weight: 600; }
+    tr:nth-child(even) td { background: #f6f8f5; }
+    .intro {
+      font-size: 8.5pt;
+      color: #3d5648;
+      margin: 0 0 8px;
+    }
+    .future-card {
+      border-left: 3px solid #c9a227;
+      background: #fbf8f0;
+      border: 1px solid #e8d9b5;
+      border-left-width: 3px;
+      border-radius: 8px;
+      padding: 8px 9px;
+    }
+    .future-card.adv {
+      border-left-color: #8b5a9e;
+      background: #f8f4fa;
+      border-color: #ddd0e5;
+    }
+    .future-card h3 { color: #6a4a12; }
+    .future-card.adv h3 { color: #5a2d6b; }
+    .note {
+      font-size: 7.5pt;
+      color: #3d5648;
+      background: #eef4ef;
+      border-radius: 6px;
+      padding: 5px 8px;
+      margin-top: 5px;
+    }
+    .live {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .live div {
+      background: #eef4ef;
+      border-radius: 7px;
+      padding: 6px 8px;
+      font-size: 7.5pt;
+    }
+    .live strong {
+      display: block;
+      font-size: 6.5pt;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #5a7264;
+      margin-bottom: 1px;
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <p class="eyebrow">Deep Learning IndabaX Namibia 2026 · Product brief</p>
+    <h1>Vision — Features: Now &amp; Next</h1>
+    <p>
+      What farmers can do today across the website and mobile app, and a forward roadmap of
+      more advanced capabilities we could build next.
+    </p>
+    <div class="meta">
+      <span class="chip">Shipped today</span>
+      <span class="chip">Near-term upgrades</span>
+      <span class="chip">Advanced future</span>
+      <span class="chip">Web + Android APK live</span>
+    </div>
+  </header>
+
+  <section>
+    <h2>1. What Vision is today</h2>
+    <p class="intro">
+      Vision is a complete farmer loop: create an account → manage camps → run an explainable
+      rangeland assessment → ask follow-ups → compare camps — with live weather, research plot
+      matching, optional photos, and offline browse of saved data.
+    </p>
+    <div class="live">
+      <div><strong>Website</strong>https://vision-kf45.vercel.app</div>
+      <div><strong>API</strong>https://vision-52yf.onrender.com</div>
+      <div><strong>Mobile</strong>Expo EAS Android APK</div>
+    </div>
+    <p class="note">
+      Demo login: <strong>demo@vision.na</strong> / <strong>vision123</strong> —
+      Otjiwarongo Demonstration Farm with North, River, Acacia, and Rest camps.
+    </p>
+  </section>
+
+  <section>
+    <h2>2. Features shipped now</h2>
+    <div class="cols-3">
+      <div class="card">
+        <h3><span class="tag now">Now</span> Auth &amp; accounts</h3>
+        <ul>
+          <li>Register + login (JWT)</li>
+          <li>Auto-creates a farm on signup</li>
+          <li>Optional farm name &amp; region</li>
+          <li>Secure token storage on mobile</li>
+          <li>Seeded demo farmer account</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3><span class="tag now">Now</span> Farm &amp; camps</h3>
+        <ul>
+          <li>Create / edit camps (area, livestock, grazing)</li>
+          <li>Coords: map picker (web) / GPS (mobile)</li>
+          <li>Camp history of past assessments</li>
+          <li>Onboarding when no camps yet</li>
+          <li>Offline queue for create/update camp</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3><span class="tag now">Now</span> Assessments</h3>
+        <ul>
+          <li>Guided wizard: Camp → Herd → Grazing → Photos → Review</li>
+          <li>Statuses: Good / Watch / High concern / Insufficient data</li>
+          <li>Evidence, confidence, limitations, next steps</li>
+          <li>Gemini tool-calling agent</li>
+          <li>Rule-based fallback if AI is down</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="cols-3" style="margin-top:7px">
+      <div class="card">
+        <h3><span class="tag now">Now</span> AI advisor (Ask)</h3>
+        <ul>
+          <li>Conversational grazing advice</li>
+          <li>Uses same farm/weather/research tools</li>
+          <li>Suggested starter questions</li>
+          <li>Text-to-speech (web + mobile)</li>
+          <li>Speech-to-text on website</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3><span class="tag now">Now</span> Data &amp; weather</h3>
+        <ul>
+          <li>Live Open-Meteo rainfall &amp; temperature</li>
+          <li>~70 Namibia research plots matched</li>
+          <li>LSU / ha &amp; grazing-duration calcs</li>
+          <li>Comparable plot cards + cover trends</li>
+          <li>Drought-context hints</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3><span class="tag now">Now</span> Photos</h3>
+        <ul>
+          <li>Optional N/E/S/W camp photos</li>
+          <li>Camera + library on mobile</li>
+          <li>Cautious vision analysis (density, soil, dryness…)</li>
+          <li>Never invents exact biomass %</li>
+          <li>Findings strengthen the assessment</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="cols-3" style="margin-top:7px">
+      <div class="card">
+        <h3><span class="tag now">Now</span> Compare</h3>
+        <ul>
+          <li>Side-by-side camp comparison</li>
+          <li>AI-assisted comparison narrative</li>
+          <li>Useful for rotation planning</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3><span class="tag now">Now</span> Offline &amp; PWA</h3>
+        <ul>
+          <li>Cache farms, camps, past assessments</li>
+          <li>Queue camp edits when offline</li>
+          <li>Connectivity banner (slow / offline)</li>
+          <li>Website PWA shell installable</li>
+          <li>Assess / Ask / weather need network</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3><span class="tag now">Now</span> Deploy surfaces</h3>
+        <ul>
+          <li>Website on Vercel</li>
+          <li>API on Render (Docker)</li>
+          <li>DB on Supabase</li>
+          <li>Android APK via Expo EAS</li>
+          <li>Shared design system (sand / veld)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>3. Website vs mobile parity (today)</h2>
+    <table>
+      <tr>
+        <th style="width:32%">Capability</th>
+        <th>Website</th>
+        <th>Mobile (APK / Expo)</th>
+      </tr>
+      <tr>
+        <td>Auth, camps, assess, ask, compare</td>
+        <td><span class="tag now">Yes</span></td>
+        <td><span class="tag now">Yes</span></td>
+      </tr>
+      <tr>
+        <td>Offline cache + camp edit queue</td>
+        <td><span class="tag now">Yes</span> (+ PWA)</td>
+        <td><span class="tag now">Yes</span></td>
+      </tr>
+      <tr>
+        <td>Set camp location</td>
+        <td>Map picker</td>
+        <td>GPS “Use my location”</td>
+      </tr>
+      <tr>
+        <td>Voice input (STT)</td>
+        <td><span class="tag now">Yes</span> (browser)</td>
+        <td>Limited (not Expo Go native)</td>
+      </tr>
+      <tr>
+        <td>Voice playback (TTS)</td>
+        <td><span class="tag now">Yes</span></td>
+        <td><span class="tag now">Yes</span></td>
+      </tr>
+      <tr>
+        <td>Photos</td>
+        <td>File upload</td>
+        <td>Camera + library</td>
+      </tr>
+    </table>
+  </section>
+
+  <!-- PAGE 2 -->
+  <section class="page-break">
+    <h2>4. Near-term upgrades (practical next steps)</h2>
+    <p class="intro">High-value improvements that fit the current architecture without rewriting the core.</p>
+    <div class="cols-2">
+      <div class="future-card">
+        <h3><span class="tag next">Next</span> Product polish</h3>
+        <ul>
+          <li>Password reset + email verification</li>
+          <li>Delete camp / archive camp in the UI</li>
+          <li>Multi-farm switcher for larger operators</li>
+          <li>Native speech-to-text on Android APK</li>
+          <li>iOS build via EAS (TestFlight / App Store)</li>
+          <li>Push notifications when an assessment finishes (cold API wake)</li>
+          <li>Export assessment as PDF / WhatsApp share card</li>
+          <li>Afrikaans / Oshiwambo / Otjiherero language packs</li>
+        </ul>
+      </div>
+      <div class="future-card">
+        <h3><span class="tag next">Next</span> Reliability &amp; field use</h3>
+        <ul>
+          <li>Offline assessment draft (queue full assess when back online)</li>
+          <li>Prefetch weather when online to soften weak-signal areas</li>
+          <li>SMS / USSD light mode for feature phones</li>
+          <li>Low-bandwidth “text-only” assessment summary</li>
+          <li>Stronger cold-start UX while Render wakes</li>
+          <li>Play Store listing + signed production release</li>
+          <li>Admin seed refresh button for new research plots</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>5. Advanced features (future roadmap)</h2>
+    <p class="intro">
+      Larger capabilities that deepen the science, collaboration, and decision support —
+      building on the same agent + evidence model.
+    </p>
+    <div class="cols-3">
+      <div class="future-card adv">
+        <h3><span class="tag adv">Advanced</span> Sensing &amp; models</h3>
+        <ul>
+          <li>Satellite NDVI / fractional cover layers per camp</li>
+          <li>Seasonal carrying-capacity models by ecoregion</li>
+          <li>Rainfall forecast ensembles + drought early warning</li>
+          <li>Herd growth / offtake planning scenarios</li>
+          <li>Time-series: “how has this camp changed this season?”</li>
+          <li>Drone / higher-res photo pipelines</li>
+        </ul>
+      </div>
+      <div class="future-card adv">
+        <h3><span class="tag adv">Advanced</span> Collaboration</h3>
+        <ul>
+          <li>Multi-user farms (owner / herder / advisor roles)</li>
+          <li>Extension-officer dashboard &amp; review queue</li>
+          <li>Shared cooperatives / communal grazing units</li>
+          <li>Audit trail of advice accepted vs overridden</li>
+          <li>Referral workflows to MAWLR / local officers</li>
+          <li>Anonymised regional benchmarking</li>
+        </ul>
+      </div>
+      <div class="future-card adv">
+        <h3><span class="tag adv">Advanced</span> Intelligence</h3>
+        <ul>
+          <li>Proactive weekly “camp health” briefs</li>
+          <li>Rotation planner that suggests move dates</li>
+          <li>Multimodal chat with live map overlays</li>
+          <li>Fine-tuned local language / dialect models</li>
+          <li>Human-in-the-loop validation of photo labels</li>
+          <li>Confidence calibration from field outcomes</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="cols-2" style="margin-top:7px">
+      <div class="future-card adv">
+        <h3><span class="tag adv">Advanced</span> Integrations</h3>
+        <ul>
+          <li>Livestock market price feeds (offtake timing)</li>
+          <li>Government / NGO reporting exports</li>
+          <li>IoT trough / fence sensors (optional)</li>
+          <li>Open data APIs for researchers (opt-in)</li>
+          <li>WhatsApp Business bot for Ask + alerts</li>
+        </ul>
+      </div>
+      <div class="future-card adv">
+        <h3><span class="tag adv">Advanced</span> Trust &amp; scale</h3>
+        <ul>
+          <li>Field validation studies with farmers &amp; officers</li>
+          <li>Explainability report per assessment (tool trace)</li>
+          <li>Region-specific rule packs (Kalahari, Highland…)</li>
+          <li>Privacy controls &amp; data residency options</li>
+          <li>Multi-country expansion with local seed datasets</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>6. Suggested priority order</h2>
+    <table>
+      <tr><th style="width:12%">Phase</th><th style="width:22%">Focus</th><th>Examples</th></tr>
+      <tr>
+        <td><strong>Now</strong></td>
+        <td>Hackathon-ready product</td>
+        <td>Auth, camps, assess, ask, compare, weather, research match, photos, offline browse, web + Android APK</td>
+      </tr>
+      <tr>
+        <td><strong>Next</strong></td>
+        <td>Field readiness</td>
+        <td>iOS, native STT, PDF/WhatsApp share, password reset, delete camp, offline assess queue, languages</td>
+      </tr>
+      <tr>
+        <td><strong>Later</strong></td>
+        <td>Advanced impact</td>
+        <td>Satellite layers, multi-user + extension dashboard, rotation planner, SMS/WhatsApp channel, validation studies</td>
+      </tr>
+    </table>
+    <p class="note">
+      Vision’s design already separates <em>farmer data</em>, <em>live weather</em>, <em>research plots</em>,
+      <em>calculations</em>, and <em>AI conclusions</em> — so future sensors and models can plug in as new
+      evidence sources without changing the honesty model.
+    </p>
+  </section>
+
+  <footer>
+    <span>Vision · Features: Now &amp; Next</span>
+    <span>IndabaX Namibia 2026 · Built for Namibian farmers</span>
+  </footer>
+</body>
+</html>
